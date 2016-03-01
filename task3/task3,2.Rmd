@@ -13,13 +13,13 @@ rulete<-function(){
   return(laimejimas)
 } #sukuriama funkcija, kurios rezultatas - laimėjimas po 1000 vienodų statymų
 
-balansas=replicate(100,rulete()) # ieškomas balansas MC metodu
+balansas<-replicate(100,rulete()) # ieškomas balansas MC metodu
 ```
 
 Tikimybė, kad balansas bus teigiamas:
 
 ```{r}
-tikimybe=mean(balansas>0)
+tikimybe<-mean(balansas>0)
 ```
 
 Apytikslė $x$ reikšmė, kuriai galioja nelygybė $P(balansas<x) = 0.25$:
