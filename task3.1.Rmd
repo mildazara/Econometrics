@@ -1,0 +1,35 @@
+---
+title: "Task3,1"
+author: "Milda Zarankaitë"
+date: "Tuesday, March 01, 2016"
+output: html_document
+---
+Uþduotis: Kauliukai. Pirmasis þaidëjas meta vienà kauliukà ir fiksuojamas atsivertusiø taðkø skaièius. Antrasis þaidëjas meta du klausiukus ir fiksuojamas dydis: $\max(x_1, x_2)-1$, kur $x_1$ ir $x_2$ þymi pirmojo ir antrojo kauliukø iðkritusiø akiø skaièiø. Jeigu þaidëjø gautø taðkø skaièiai yra lygus, tai ekspermentas kartojamas ið naujo (ir taip kartojama tol, kol galiausiai nustatomas laimëtojas). Kokia tikimybë laimëti pirmajam þaidëjui?
+
+Sukuriama funkcija, kurios rezultatas - vieno eksperimento laimëtojas:
+```{r}
+
+experiment<-function(){
+  zaid1 = 0
+  zaid2 = 0
+   while (zaid1==zaid2){ #Naudojamas ciklas, jei taðkø suma vienoda
+     zaid1=sample(6, size=1) #Pirmojo þaidëjo taðkø skaièius 
+     x_1=sample(6, size=1) 
+     x_2=sample(6, size=1)
+     zaid2=max(x_1,x_2)-1 #Antrojo þaidëjo taðkø skaièius
+   }
+   if(zaid1>zaid2){   
+    return(TRUE)
+   }  
+   else if(zaid1<zaid2){
+    return(FALSE)
+   }
+}
+```
+
+Eksperimentas kartojamas 1000, siekiant iðsiaiðkinti tikimybæ laimëti pirmàjam þaidëjui:
+
+```{r}
+kartojimas<-replicate(1000, experiment()) 
+mean(kartojimas) #=P
+```
