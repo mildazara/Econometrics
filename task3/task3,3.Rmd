@@ -1,0 +1,42 @@
+---
+title: "task3,3"
+author: "Milda Zarankaite"
+date: "Saturday, March 05, 2016"
+output: html_document
+  keep_md:true
+---
+Moneta. Tarkime metama moneta. Jeigu iškrenta herbas, tai laimite $12$ EUR. Jeigu skaičius, tai pralošiate $10$ EUR. Bus žaidžiama $n$ kartų ir gauti rezultatai sumuojami. Kokia tikimybė jums turėti teigiamą balansą po $n$ kartų? Kokis išlošių pasikliautiniai $95%$ intervalai. Ištirkite tikimybes su skirtingais $n$, pvz. $n={1,2,5,10,20,100}$. Kaip atrodo balanso tankis? Kai $n=100$.
+
+SPRENDIMAS:
+
+```{r}
+#Sukuriama funkcija, kuri parodo laimėjimą
+moneta<-function(n){
+  sum(sample(c(12,-10),size=n,replace=TRUE))
+}
+```
+
+Skaičiuojamos tikimybės, kad balansas yra teigiamas visiem pateiktiem n:
+
+```{r}
+tik1<-mean(replicate(100, moneta(1))>0)) #kai n=1
+tik2<-mean(replicate(100, moneta(2))>0) #kai n=2
+tik5<-mean(replicate(100, moneta(5))>0) #kai n=5
+tik10<-mean(replicate(100, moneta(10))>0) #kai n=10
+tik20<-mean(replicate(100, moneta(20))>0) #kai n=20
+tik100<-mean(replicate(100, moneta(100))>0) #kai n=100
+```
+
+Balanso tankis: 
+
+```{r}
+#sim - simuliacija, siekiant gauti balanso pasiskirstymą
+sim<-replicate(100, moneta(100))
+plot(density(sim), main="Tankio grafikas", xlab="N=100 Galimos reikšmės", ylab="Tankumas", col="4", lwd="4")
+```
+
+Pasikliautinis intervalas, kai n=100
+```{r}
+quantile(sim, 0.025)
+quantile(sim, 0.975)
+```
