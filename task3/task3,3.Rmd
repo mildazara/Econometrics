@@ -29,7 +29,7 @@ tik100<-mean(replicate(100, moneta(100))>0) #kai n=100
 
 Balanso tankis: 
 
-```{r}
+```{r, echo=FALSE}
 #sim - simuliacija, siekiant gauti balanso pasiskirstymą
 sim<-replicate(100, moneta(100))
 plot(density(sim), main="Tankio grafikas", xlab="N=100 Galimos reikšmės", ylab="Tankumas", col="4", lwd="4")
