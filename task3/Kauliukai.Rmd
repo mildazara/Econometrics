@@ -1,0 +1,36 @@
+---
+title: "Task3.1. KAULIUKAI"
+author: "Milda Zarankaitė"
+date: "Tuesday, March 01, 2016"
+output: html_document
+---
+Kauliukai. 
+
+Užduotis: Pirmasis žaidėjas meta vieną kauliuką ir fiksuojamas atsivertusių taškų skaičius. Antrasis žaidėjas meta du klausiukus ir fiksuojamas dydis: $\max(x_1, x_2)-1$, kur $x_1$ ir $x_2$ žymi pirmojo ir antrojo kauliukų iškritusių akių skaičių. Jeigu žaidėjų gautų taškų skaičiai yra lygus, tai ekspermentas kartojamas iš naujo (ir taip kartojama tol, kol galiausiai nustatomas laimėtojas). Kokia tikimybė laimėti pirmajam žaidėjui?
+
+Sprendimas:
+
+1. Sukuriama funkcija, kurios rezultatas - vieno eksperimento laimėtojas:
+```{r}
+experiment<-function(){
+  zaid1 = 0
+  zaid2 = 0
+   while (zaid1==zaid2){ #Naudojamas ciklas, jei taškų suma vienoda
+     zaid1=sample(6, size=1) #Pirmojo žaidėjo taškų skaičius 
+     zaid2=max(sample(6, size=2, replace=TRUE))-1 #Antrojo žaidėjo taškų skaičius
+   }
+   if(zaid1>zaid2){   
+    return(TRUE)
+   }  
+   else if(zaid1<zaid2){
+    return(FALSE)
+   }
+}
+```
+
+2. Skaičiuojama tikimybė laimėti pirmajam žaidėjui Monte Carlo metodu. Eksperimentas kartojamas 1000 kartų naudojant "replicate" funkciją ir skaičiuojamas gauto rezultato vidurkis, t.y. kokią sudaro pirmojo žaidėjo laimėjimai.
+
+```{r}
+kartojimas<-replicate(1000, experiment()) 
+mean(kartojimas) #=P
+```
