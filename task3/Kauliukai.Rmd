@@ -2,7 +2,8 @@
 title: "Task3.1. KAULIUKAI"
 author: "Milda Zarankaitė"
 date: "Tuesday, March 01, 2016"
-output: html_document
+output: html_document:
+    keep_md: yes
 ---
 Kauliukai. 
 
