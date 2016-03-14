@@ -60,6 +60,7 @@ mod2<-update(mod1, kaina~plotas+aukstas+silumosLaidumas)
 summary(mod2)
 ```
 Kadangi likę įverčiai reikšmingi - tikriname patį modelį pagal kriterijus.
+
 ####3.Modelio patikimumo parametrai:
 3.1. "R-Squared" ir "Akaike's Information Criteria":
 ```{r}
@@ -72,12 +73,14 @@ library("car")# "car" bibliotekoje yra vif ir ncvTest
 vif(mod2)
 ```
 Nė vieno iš kintamųjų koeficientas nėra 10<, vadinasi, multikolinearumo problemos nėra.
+
 3.3. Heteroskedastiškumo tikrinimas. Išbrėžiamos liekanos ir tikrinama pagal Breuch-Pagan testą:
 ```{r}
 plot(mod2$res~mod2$fitted, main="Liekanų išsibarstymas pagal reikšmes", col=2)
 ncvTest(mod2)
 ```
 Kadangi p>0.05, vadinasi, priimame testo H0 hipotezę, kuri teigia, kad modelis homoskedastiškas - visų stebėjimų paklaidų dispersija yra konstanta.
+
 3.4. Tikrinamas liekanų normalumas:
 ```{r}
 par(mfrow=c(1,1))
@@ -86,6 +89,7 @@ lines(density(mod2$res), col=4, lwd=2) #liekanų tankio grafikas
 shapiro.test(mod2$res) #testas, kuris nustato paklaidų normalumą
 ```
 Pagal shapiro.test p-value>0.05 priimame H0: paklaidos yra normalios
+
 3.5.Tikinama liekatų autokoreliacija:
 ```{r}
 durbinWatsonTest(mod2)
