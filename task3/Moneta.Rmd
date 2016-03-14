@@ -18,7 +18,7 @@ laimejimas<-function(n){
 }
 ```
 
-2. Sukuriama funkcija, kuri apskaičiuoja tikimybę, kad laimėjimo balansas yra teigiamas:(Naudojamas Monte Carlo metodas: "replicate" funkcijos pagalba bandymas kartojamas 100 kartų ir  apskaičiuojamas vidurkis(=tikimybė), kad laimejimo balansas yra teigiamas)
+2. Sukuriama funkcija, kuri apskaičiuoja tikimybę, kad laimėjimo balansas yra teigiamas:(Naudojamas Monte Carlo metodas: "replicate" funkcijos pagalba bandymas kartojamas 1000 kartų ir  apskaičiuojamas vidurkis(=tikimybė), kad laimejimo balansas yra teigiamas)
 ```{r}
 tikimybe<-function(n){
   mean(replicate(1000, laimejimas(n))>0)
@@ -36,7 +36,7 @@ tikimybe(100)
 ```
 
 4. Balanso tankis: 
-```{r, echo=FALSE}
+```{r}
 #sim - simuliacija, siekiant gauti balanso pasiskirstymą
 sim<-replicate(100, laimejimas(100))
 plot(density(sim), main="Balanso tankio grafikas", xlab="Laimėjimas", ylab="Tikimybė", col="4", lwd="4")
@@ -44,6 +44,5 @@ plot(density(sim), main="Balanso tankio grafikas", xlab="Laimėjimas", ylab="Tik
 
 5.Ieškomas $95%$ pasikliautinis intervalas, kai n=100:
 ```{r}
-quantile(sim, 0.025)
-quantile(sim, 0.975)
+c(quantile(sim, 0.025),quantile(sim, 0.975))
 ```
