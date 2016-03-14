@@ -1,0 +1,98 @@
+---
+title: "task4"
+author: "Milda Zarankaite"
+date: "Sunday, March 13, 2016"
+output: html_document
+---
+
+#Tiesinė regresija
+
+###Užduotis: Aplanke task4 yra duomenų failas, kuriame rasite nekilnojamo turto (o tiksliau gyvenaųjų būtų) kainas ir kaikurias jų charakteristikas. Jūsų užduotis atlikti išsamią tiesinę regresiją. Lygtis reikalinga prekyboms agentams, kad geriau suprastų kokią įtaką skirtingos charakteristikos daro galutinei kainai.
+
+###Sprendimas:
+
+####1.Duomenų sutvarkymas:
+1.1.Nuskaitomi ir apžiūrimi duomenys:
+```{r}
+setwd("~/Econometrics/task4")
+datafull<-read.csv2("data.csv") 
+head(datafull)
+plot(datafull)
+```
+1.2. Iš karto pastebima, kad 2 rodikliai - garsoIzoliacija ir silumosLaidumas - labai susiję, todėl tikrinama jų koreliacija:
+```{r}
+cor(datafull)
+```
+Kadangi koreliacijos koeficientas tarp aptartų rodiklių labai didelis - rodikliai labai susiję, t.y. abu apibūdina buto izoliaciją. Tai reikškia, kad koeficientų įverčiai tikriausiai bus paslinkti. Siekiant panaikinti šią problemą reikia arba panaikinti vieną iš kintamųjų arba juos kažkaip sujungti. 
+Sujungti (vienas iš būdų - skaičiuoti vidurkį) nepasirenkama, nes nenustatyta ar abiejų koeficienų duomenis apibūdina tie patys matavimo vienetai.
+Išvada: ištrinami garsoIzoliacijos duomenys. SilumosLaidumas yra svarbesnis, daro įtaką gyventojų išlaidoms, t.y mokesčiams už šildymą.
+```{r}
+datafull$garsoIzoliacija<-NULL
+```
+1.3. Tikrinamos išskirtys:
+1.3.1. "Boxplot" grafiku braiŽomos duomenų reikšmės ir jų išsidėstymas
+```{r}
+par(mfrow=c(2,2)) #susikuriamas grafinis parametras (2x2 grafikai)
+boxplot(datafull$kaina, main="Kainos reikšmės")
+boxplot(datafull$atstumasIkiPrekybosCentro, main="Atstumo iki prekybos centro reikšmės")
+boxplot(datafull$silumosLaidumas, main="Šilumos laidumo reikšmės")
+boxplot(datafull$plotas, main="Ploto reikšmės")
+
+```
+1.3.2. Pastebima, kad duomenyse yra išskirčių, tad duomenys tikrinami pagal "influence.measures" diganostiką. Rezultatas: tik vienas iš parametrų pagal cook.d koeficientą (su $*$) parodė reikšmingas eilutėse 253 ir 254 esančias išskirtis.Eilutes su duomenimis, kuriuose yra išskirtys - pašaliname.
+```{r}
+modIsskirtims<-lm(kaina~plotas, datafull)
+summary(influence.measures(modIsskirtims)) #253, 254 -isskirtis, su kitais nera
+data<-datafull[-c(253,254),] #Atnaujinti duomenys, tinkami modelių kūrimui
+```
+
+####2.Modelio kūrimas
+2.1 Sukuriamas tiesnis modelis nuo visų turimų kintamųjų:
+```{r}
+mod1<-lm(kaina~+plotas+aukstas+silumosLaidumas+atstumasIkiPrekybosCentro, data)
+summary(mod1)$coefficients
+```
+Iš summary lentelėje pateiktos p-value galime teigti, kad koeficientas prie kintamojo "atstumasIkiPrekybosCentro" yra nereikšmingas (H0: b4=0 - priimame), todėl jis pašalinamas.
+
+2.2. Atnaujinamas mod2 ir tikrinamas jo kintamųjų reikšmingumas:
+```{r}
+mod2<-update(mod1, kaina~plotas+aukstas+silumosLaidumas)
+summary(mod2)
+```
+Kadangi likę įverčiai reikšmingi - tikriname patį modelį pagal kriterijus.
+####3.Modelio patikimumo parametrai:
+3.1. "R-Squared" ir "Akaike's Information Criteria":
+```{r}
+(summary(mod2))$r.squared #Kuo arčiau 1, tuo modelis patikimesnis. 
+AIC(mod2)
+```
+3.2.Multikolinearumo tikrinimas pagal Various Inflation Factor: 
+```{r}
+library("car")# "car" bibliotekoje yra vif ir ncvTest
+vif(mod2)
+```
+Nė vieno iš kintamųjų koeficientas nėra 10<, vadinasi, multikolinearumo problemos nėra.
+3.3. Heteroskedastiškumo tikrinimas. Išbrėžiamos liekanos ir tikrinama pagal Breuch-Pagan testą:
+```{r}
+plot(mod2$res~mod2$fitted, main="Liekanų išsibarstymas pagal reikšmes", col=2)
+ncvTest(mod2)
+```
+Kadangi p>0.05, vadinasi, priimame testo H0 hipotezę, kuri teigia, kad modelis homoskedastiškas - visų stebėjimų paklaidų dispersija yra konstanta.
+3.4. Tikrinamas liekanų normalumas:
+```{r}
+par(mfrow=c(1,1))
+histmod2<-hist(mod2$res, probability=TRUE, main="Liekanų histograma") #išbrėžiama histograma
+lines(density(mod2$res), col=4, lwd=2) #liekanų tankio grafikas
+shapiro.test(mod2$res) #testas, kuris nustato paklaidų normalumą
+```
+Pagal shapiro.test p-value>0.05 priimame H0: paklaidos yra normalios
+3.5.Tikinama liekatų autokoreliacija:
+```{r}
+durbinWatsonTest(mod2)
+```
+Kadangi statistika arti 2 ir p-value>0.05, H0: nėra koreliacijos tarp liekakų priimame.
+
+Vadinasi, kadangi modelis atitinka šiuos kriterijus, galime teigti, kad teisingas modelis $kaina~+plotas+aukstas+silumosLaidumas$. 
+Atitinkamai įverčiai parodo kaip pakitus vienam vienetui iš šių charakteristikų, pakinta kaina: 
+$kaina=8035.8 + 600.33*plotas+3.18.23*aukstas+528.82*silumosLaidumas+e$
+
