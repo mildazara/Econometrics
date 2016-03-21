@@ -19,7 +19,7 @@ datafull<-read.csv2("data.csv")
 head(datafull)
 plot(datafull)
 ```
-1.2. Iš karto pastebima, kad 2 rodikliai - garsoIzoliacija ir silumosLaidumas - labai susiję, todėl tikrinama jų koreliacija:
+1.2. Iš karto pastebima, kad 2 rodikliai - garsoIzoliacija ir silumosLaidumas - labai susiję, todėl tikrinama galima duomenų koreliacija:
 ```{r}
 cor(datafull)
 ```
@@ -74,21 +74,21 @@ vif(mod2)
 ```
 Nė vieno iš kintamųjų koeficientas nėra 10<, vadinasi, multikolinearumo problemos nėra.
 
-3.3. Heteroskedastiškumo tikrinimas. Išbrėžiamos liekanos ir tikrinama pagal Breuch-Pagan testą:
+3.3. Heteroskedastiškumo tikrinimas. Išbrėžiamos paklaidos ir tikrinama pagal Breuch-Pagan testą:
 ```{r}
-plot(mod2$res~mod2$fitted, main="Liekanų išsibarstymas pagal reikšmes", col=2)
+par(mfrow=c(1,1))
+plot(mod2$res~mod2$fitted, main="Paklaidų išsibarstymas pagal reikšmes", col=2)
 ncvTest(mod2)
 ```
 Kadangi p>0.05, vadinasi, priimame testo H0 hipotezę, kuri teigia, kad modelis homoskedastiškas - visų stebėjimų paklaidų dispersija yra konstanta.
 
 3.4. Tikrinamas liekanų normalumas:
 ```{r}
-par(mfrow=c(1,1))
 histmod2<-hist(mod2$res, probability=TRUE, main="Liekanų histograma") #išbrėžiama histograma
 lines(density(mod2$res), col=4, lwd=2) #liekanų tankio grafikas
-shapiro.test(mod2$res) #testas, kuris nustato paklaidų normalumą
+shapiro.test(mod2$res) #testas, kuris nustato liekanų normalumą
 ```
-Pagal shapiro.test p-value>0.05 priimame H0: paklaidos yra normalios
+Pagal shapiro.test p-value>0.05 priimame H0: liekanų paklaidos yra normalios
 
 3.5.Tikinama liekatų autokoreliacija:
 ```{r}
