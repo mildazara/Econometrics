@@ -26,19 +26,19 @@ tikimybe<-function(n){
 ```
 
 3. Tiriamos tikimybės su skirtingais  $n={1,2,5,10,20,100}$ :
-```{r}
-tikimybe(1) 
-tikimybe(2)
-tikimybe(5)
-tikimybe(10)
-tikimybe(20)
-tikimybe(100)
+```{r, echo=FALSE}
+tikimybes<-c(tikimybe(1),tikimybe(2),tikimybe(5),tikimybe(10),tikimybe(20),tikimybe(100))
+n<-c(1,2,5,10,20,100)
+table<-data.frame(n, tikimybes)
+table
 ```
 
 4. Balanso tankis: 
 ```{r}
 #sim - simuliacija, siekiant gauti balanso pasiskirstymą
 sim<-replicate(100, laimejimas(100))
+```
+```{r, echo=FALSE}
 plot(density(sim), main="Balanso tankio grafikas", xlab="Laimėjimas", ylab="Tikimybė", col="4", lwd="4")
 ```
 
