@@ -90,7 +90,7 @@ shapiro.test(mod2$res) #testas, kuris nustato liekanų normalumą
 ```
 Pagal shapiro.test p-value>0.05 priimame H0: liekanų paklaidos yra normalios
 
-3.5.Tikinama liekatų autokoreliacija:
+3.5.Tikinama liekanų autokoreliacija:
 ```{r}
 durbinWatsonTest(mod2)
 ```
