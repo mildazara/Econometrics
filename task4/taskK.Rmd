@@ -31,7 +31,7 @@ datafull$garsoIzoliacija<-NULL
 ```
 1.3. Tikrinamos išskirtys:
 1.3.1. "Boxplot" grafiku braiŽomos duomenų reikšmės ir jų išsidėstymas
-```{r}
+```{r, echo=FALSE}
 par(mfrow=c(2,2)) #susikuriamas grafinis parametras (2x2 grafikai)
 boxplot(datafull$kaina, main="Kainos reikšmės")
 boxplot(datafull$atstumasIkiPrekybosCentro, main="Atstumo iki prekybos centro reikšmės")
@@ -75,17 +75,21 @@ vif(mod2)
 Nė vieno iš kintamųjų koeficientas nėra 10<, vadinasi, multikolinearumo problemos nėra.
 
 3.3. Heteroskedastiškumo tikrinimas. Išbrėžiamos paklaidos ir tikrinama pagal Breuch-Pagan testą:
-```{r}
+```{r, echo=FALSE}
 par(mfrow=c(1,1))
 plot(mod2$res~mod2$fitted, main="Paklaidų išsibarstymas pagal reikšmes", col=2)
+```
+```{r}
 ncvTest(mod2)
 ```
 Kadangi p>0.05, vadinasi, priimame testo H0 hipotezę, kuri teigia, kad modelis homoskedastiškas - visų stebėjimų paklaidų dispersija yra konstanta.
 
 3.4. Tikrinamas liekanų normalumas:
-```{r}
+```{r, echo=FALSE}
 histmod2<-hist(mod2$res, probability=TRUE, main="Liekanų histograma") #išbrėžiama histograma
 lines(density(mod2$res), col=4, lwd=2) #liekanų tankio grafikas
+```
+```{r}
 shapiro.test(mod2$res) #testas, kuris nustato liekanų normalumą
 ```
 Pagal shapiro.test p-value>0.05 priimame H0: liekanų paklaidos yra normalios

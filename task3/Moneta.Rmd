@@ -3,7 +3,6 @@ title: "task3.3. MONETA"
 author: "Milda Zarankaite"
 date: "Saturday, March 05, 2016"
 output: html_document
-    keep_md:true
  ---
 #Moneta. 
 
