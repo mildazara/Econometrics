@@ -7,7 +7,7 @@ output: html_document
 
 #Tiesinė regresija
 
-###Užduotis: Aplanke task4 yra duomenų failas, kuriame rasite nekilnojamo turto (o tiksliau gyvenaųjų būtų) kainas ir kaikurias jų charakteristikas. Jūsų užduotis atlikti išsamią tiesinę regresiją. Lygtis reikalinga prekyboms agentams, kad geriau suprastų kokią įtaką skirtingos charakteristikos daro galutinei kainai.
+###Užduotis: Aplanke task4 yra duomenų failas, kuriame rasite nekilnojamo turto (o tiksliau gyvenamųjų butų) kainas ir kaikurias jų charakteristikas. Jūsų užduotis atlikti išsamią tiesinę regresiją. Lygtis reikalinga prekyboms agentams, kad geriau suprastų kokią įtaką skirtingos charakteristikos daro galutinei kainai.
 
 ###Sprendimas:
 
