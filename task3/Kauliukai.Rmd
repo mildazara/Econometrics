@@ -3,7 +3,6 @@ title: "Task3.1. KAULIUKAI"
 author: "Milda Zarankaitė"
 date: "Tuesday, March 01, 2016"
 output: html_document:
-    keep_md: yes
 ---
 Kauliukai. 
 
@@ -11,7 +10,7 @@ Užduotis: Pirmasis žaidėjas meta vieną kauliuką ir fiksuojamas atsivertusi�
 
 Sprendimas:
 
-1. Sukuriama funkcija, kurios rezultatas - vieno eksperimento laimėtojas:
+1.Sukuriama funkcija, kurios rezultatas - vieno eksperimento laimėtojas:
 ```{r}
 experiment<-function(){
   zaid1 = 0
@@ -29,7 +28,7 @@ experiment<-function(){
 }
 ```
 
-2. Skaičiuojama tikimybė laimėti pirmajam žaidėjui Monte Carlo metodu. Eksperimentas kartojamas 1000 kartų naudojant "replicate" funkciją ir skaičiuojamas gauto rezultato vidurkis, t.y. kokią sudaro pirmojo žaidėjo laimėjimai.
+2.Skaičiuojama tikimybė laimėti pirmajam žaidėjui Monte Carlo metodu. Eksperimentas kartojamas 1000 kartų naudojant "replicate" funkciją ir skaičiuojamas gauto rezultato vidurkis, t.y. kokią sudaro pirmojo žaidėjo laimėjimai.
 
 ```{r}
 kartojimas<-replicate(1000, experiment()) 
