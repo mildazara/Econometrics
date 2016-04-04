@@ -1,0 +1,82 @@
+---
+title: "task6"
+author: "Milda Zarankaite"
+date: "Tuesday, March 22, 2016"
+output: html_document
+---
+
+#Task6
+
+Šaltinyje [@Hyndman2014a, ch. 1. Introduction to forecasting, Lab Session 1] pateikta užduotis: 
+1. Use the Dow Jones index (data set dowjones) to do the following:
+(a) Produce a time plot of the series.
+(b) Produce forecasts using the drift method and plot them.
+(c) Show that the graphed forecasts are identical to extending the
+line drawn between the first and last observations.
+(d) Try some of the other benchmark functions to forecast the same
+data set. Which do you think is best? Why?
+
+##Sprendimas:
+
+a)Produce a time plot of the series:
+```{r, echo=FALSE}
+library(fpp) 
+plot(dowjones, col="dark green", lwd=2) #Choosing and plotting the dowjones data
+```
+b)Produce forecasts using the drift method and plot them.
+```{r}
+drift<-rwf(dowjones, drift=TRUE, h=20)
+plot(drift, xlab="Time", ylab="Dow Jones index")
+```
+*Drift method: forecasts equal to last value plus average change. In this case, Random Walk Forecast is used for 20 years period forecating.
+Drift forecast shows the increase of Dow Jones index in 20 years 
+
+c)Show that the graphed forecasts are identical to extending the
+line drawn between the first and last observations.
+```{r}
+plot(drift, xlab="Time", ylab="Dow Jones index")
+x1=1
+x2=78
+y1<-dowjones[1] #1st observation 
+y2<-dowjones[78] #78th observation
+b=(y1-y2)/(x1-x2)
+a=(y1*x2-y2*x1)/(x2-x1)
+#segments(x1,y1,x2,y2, col="red")
+abline(a,b, col="red")
+
+```
+The coefficients a & b of the line are calculated mechanically from 2 eqasions system:
+$y1=a+b*x1$ and $y2=a+b*x2$. From the system => $b=(y1-y2)/(x1-x2)$ , $a=(y1*x2-y2*x1)/(x2-x1)$
+
+d)Try some of the other benchmark functions to forecast the same
+data set. Which do you think is best? Why?
+
+There are 3 more benchmark functions to forecast: 
+i)Mean method (forecast of all future values is equal to mean of historical data);
+ii)Naive method (forecasts equal to last observed value);
+iii)Seasonal naive method (forecasts equal to last value from same season).
+
+Drift and other 3 forecast methods are shown below:
+```{r, echo=FALSE}
+par(mfrow=c(2,2))
+drift<-rwf(dowjones, drift=TRUE, h=20) #Drift method
+plot(drift, xlab="Time", ylab="Dow Jones index")
+meanm<-meanf(dowjones, h=20) #Mean method
+plot(meanm, xlab="Time", ylab="Dow Jones index")
+naivem<-naive(dowjones, h=20) #Naive method
+plot(naivem, xlab="Time", ylab="Dow Jones index")
+snaivem<-snaive(dowjones, h=20) #Seasonal naive  method
+plot(snaivem, xlab="Time", ylab="Dow Jones index")
+```
+Forecast from Mean looks the least accurate, because the forecast line depends on all 80 years mean and the error is the biggest compairing to others. Forecasts from Naive and Seasonal naive methods looks the same as the time series has to seasonal trend. 
+
+Let's look at the at the forecast from the last 20 years using models drift and naive:
+```{r}
+dowjones2<-ts(data=dowjones, start=58, end=78) #choosing 20 last years
+par(mfrow=c(1,2))
+drift2<-rwf(dowjones2, drift=TRUE, h=20) #Drift method
+plot(drift2, xlab="Time", ylab="Dow Jones index")
+naivem2<-naive(dowjones2, h=20) #Naive method
+plot(naivem2, xlab="Time", ylab="Dow Jones index")  
+```
+According to Drift forecast - decrese is predicted, while Naive method still shows the same prediction. In order to that, I would choose Naive method as the best to forecast this data.
