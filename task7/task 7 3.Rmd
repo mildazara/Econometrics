@@ -60,7 +60,7 @@ Tikslumas pagal Seasonal Naive metodo prognozę:
 accuracy(snaivem,bricks2)
 ```
 * (e) Which method does best? Why?
-Išvada: tiksliausias yra Seasonal Naive metodas, nes pagal accuracy Test set -  reikšmės arčiausiai 0, palyginus su kitais metodais. (Test set reikšmės lygina prognozuojamas reikšmes su bricks2)
+Išvada: tiksliausias yra Seasonal Naive metodas, nes pagal accuracy Test set -  reikšmės arčiausiai 0, palyginus su kitais metodais. (Nepaisant to, kad Training set demonstruoja drift metodo tinkamumą, nepasirenkame, nes kreipiame didesnį dėmesį prognozei)
 * (f) For the best method, compute the residuals and plot them. (Pavyzdys pateiktas užduotyje jau naudojamas)
 ```{r}
 res <- residuals(snaivem)
