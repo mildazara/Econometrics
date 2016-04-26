@@ -9,7 +9,7 @@ Lab Session 2. Task 2
 Tasks reference - @Hyndman2014a
 
 Library fpp recomended for all of the tasks :
-```{r}
+```{r,message=FALSE}
 library(fpp)
 ```
 
@@ -55,6 +55,7 @@ fc1 <- snaive(bricksq)
 res1 <- residuals(fc1)
 Acf(res1)
 ```
+
 ACF parodo, kad yra autokoreliacija (lag reikšmės kerta mėlyną punktyrinę liniją). Liekanos nėra baltasis triukšmas. Metodui reikia panaikinti sezoniškumą (suglodinti) arba pridėti trendą, norint, kad liekanos būtų baltasis triukšmas.
 
 * ibmclose:
@@ -64,6 +65,7 @@ fc2 <- naive(ibmclose)
 res2 <- residuals(fc2)
 Acf(res2)
 ```
+
 ACF parodo, kad yra autokoreliacija (lag reikšmės kerta mėlyną punktyrinę liniją) tik 3 vietose, bet sunku atsekti kažkokį modelį. 
 
 * hsales:
@@ -73,6 +75,7 @@ fc3 <- snaive(hsales)
 res3 <- residuals(fc3)
 Acf(res3)
 ```
+
 ACF parodo, kad yra autokoreliacija (lag reikšmės kerta mėlyną punktyrinę liniją). Liekanos nėra baltasis triukšmas. Metodui reikia panaikinti sezoniškumą, norint, kad liekanos būtų baltasis triukšmas, galima būtų pridėti trendą. (Panaikinti sezoniškumo šiuo atveju neužtenka, nes jis visvien labai ryškus 12 lage).
 
 ####(c) Do a Ljung-Box test on the residuals. What do the results mean?

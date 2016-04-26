@@ -1,0 +1,92 @@
+---
+title: "task12"
+author: "Milda Zarankaite"
+date: "Friday, April 22, 2016"
+output: html_document
+---
+Lab Session 5b. Task 1
+=====
+Tasks reference - @Hyndman2014a
+
+Library fpp recomended for all of the tasks :
+```{r, message=FALSE}
+library(fpp)
+```
+
+##Task:
+###For this exercise, use the monthly Australian short-term overseas visitors data, May 1985–April 2005. (Data set: visitors in expsmooth package.)
+
+Apžiūrime duomenis:
+```{r, echo=FALSE}
+plot(visitors)
+```
+*(a)* Use ets to find the best model for these data and record the training set RMSE. You should find that the best model is ETS(M,A,M).
+```{r}
+mod1<-ets(visitors)
+plot(mod1)
+```
+Kaip matome, ets funkcija automatiškai kaip geriauią modelį siūlo ETS(M,A,M) - aditive trend, multiplicative seasonal component.   
+Modelio RMSE randame iš summary ir jį priskiriame RMSE1
+```{r}
+summary(mod1)
+RMSE1<-15.847
+RMSE1
+```
+
+*(b)* We will now check how much larger the one-step RMSE is on out-of-sample data using time series cross-validation. The following code will compute the result, beginning with four years of data in the training set. (Naudojamas kodas pateiktas užduotyje)
+```{r}
+k <- 48 # minimum size for training set
+n <- length(visitors) # Total number of observations
+e <- visitors*NA # Vector to record one-step forecast errors
+for(i in 48:(n-1)) #48 - because begins with four years of data
+  {
+   train <- ts(visitors[1:i],freq=12) #ts monthly data until i
+   fit <- ets(train, "MAM", damped=FALSE) #ets "MAM" model used for dara train
+   fc <- forecast(fit,h=1)$mean #taken mean(the value) of  1 period fit data forecast
+   e[i] <- visitors[i+1]-fc # i error (visitors real data - fit forecast)
+  }
+RMSEb<-sqrt(mean(e^2,na.rm=TRUE)) #RMSE formula
+RMSEb #18.08962
+```
+
+*(c)* What would happen in the above loop if I had set train <- visitors[1:i]?
+
+Tuomet train duomenys nebūtų time series, o tiesiog reikšmės. Tokiu atveju, negalima pritaikyti ets modelio (jam reikalinti time series duomenys).
+
+*(d)* Plot e. What do you notice about the error variances? Why does this occur?
+```{r}
+plot(e)
+```
+Paklaidų sklaida: išsidėsčiusios apie 0, jų dispersija didėja. Paklaidų didėja dispersija, nes didėja ir sezoniškumo svyravimai. 
+
+*(e)* How does this problem bias the comparison of the RMSE values from (1a) and (1b)? (Hint: think about the effect of the missing values in e.)
+
+Daugiau reikšmių yra a dalyje, nes b išimami 4 metai (cikle pradedama nuo 48). Be to, paklaidos pirmaisiais metais yra mažesnės, tad natūralu, kad jų vidurkis (kuris yra na udojamas skaičiuojant RMSE) visą RMSE reikšmę mažina.
+
+*(f)* In practice, we will not know that the best model on the whole data set is ETS(M,A,M) until we observe all the data. So a more realistic analysis would be to allow ets to select a different model each time through the loop. Calculate the RMSE using this approach. (Warning: it will take a while as there are a lot of models to fit.)
+
+Naudojame b dalies ciklą, bet ets funkcijoje nenurodome modelio, o leidžiame parinkti geriausią:
+```{r}
+k <- 48 # minimum size for training set
+n <- length(visitors) # Total number of observations
+e <- visitors*NA # Vector to record one-step forecast errors
+for(i in 48:(n-1))
+  {
+    train <- ts(visitors[1:i],freq=12)
+    fit <- ets(train)
+    fc <- forecast(fit,h=1)$mean
+    e[i] <- visitors[i+1]-fc
+  }
+RMSEf<-sqrt(mean(e^2,na.rm=TRUE))
+RMSEf #18.47088
+```
+
+*(g)* How does the RMSE computed in (1f) compare to that computed in (1b)? Does the re-selection of a model at each step make much difference?
+```{r, echo=FALSE}
+RMSE<-c(RMSEb, RMSEf)
+dalis<-c("1b","1f")
+tab<-data.frame(dalis, RMSE)
+tab
+```
+Didelio skirtumo tarp šių RMSE nėra. Taip yra todėl, kad f dalyje automatiškai ets funkcija cikle parenka geriausią modelį (tikėtina, kad jis daugeliu atvejų ir buvo "MAM"), tad paklaidos yra labai panašios į paklaidas, kurios yra apskaičiuotos ir b dalyje.  
+Vadinasi, didelio skirtumo modelio parinkimas nedaro. Tačiau, nustačius modelį pagal ets funkciją, suskaičiuoti RMSE yra daug greičiau.

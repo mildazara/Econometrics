@@ -1,0 +1,88 @@
+---
+title: "task10"
+author: "Milda Zarankaite"
+date: "Tuesday, April 12, 2016"
+output: html_document
+---
+
+Lab Session 3. Task 1
+=====
+Tasks reference - @Hyndman2014a
+
+Library fpp recomended for all of the tasks :
+```{r, message=FALSE}
+library(fpp)
+```
+
+###Užduotis:
+1. For this exercise, use the price of a dozen eggs in the United States from 1900-1993 (data set eggs). Experiment with the various options in the holt() function to see how much the forecasts change with damped or exponential trend. Also try changing the parameter values for  and  to see how they affect the forecasts. Try to develop an intuition of what each parameter and argument is doing to the forecasts.
+
+[Hint: use h=100 when calling holt() so you can clearly see the
+differences between the various options when plotting the forecasts.]
+
+####Sprendimas:
+
+* Apžiūrime duomenis:
+```{r}
+plot(eggs, main="Data set Eggs")
+```
+
+* Kuriame prognozę su "holt" funkcija:
+
+1. 
+```{r}
+fit1 <- holt(eggs, h=100, exponential=TRUE, alpha=0.01) 
+plot(fit1)
+lines(fit1$fitted, col="red")
+```
+
+Naudojant eksponentinį glodinimą ir mažą alpha(=0.01), prognozė yra netiksli, nes glodina turimus duomenis ir yra priklausoma nuo trendo (nelabai atsižvelgiama į paskutines prognozes). (Iš summary=0.0036)
+
+2.
+```{r}
+fit2 <- holt(eggs, h=100, exponential=TRUE, beta=0.001)
+plot(fit2)
+lines(fit2$fitted, col="red")
+```
+
+Pagal summary alpha=0.09. alpha duomenis glodina, beta - stengiasi "pagauti" alpha tendenciją. 
+
+3.
+```{r}
+fit3 <- holt(eggs, h=100, damped=TRUE, alpha=0.9)
+plot(fit3)
+lines(fit3$fitted, col="red")
+```
+
+damped=TRUE, pasikliautiniai internalai labai didėja ir yra gerokai didesni negu turimi duomenys. Taip pat tokiu būdu atsisakoma trendo; progronės pasikliautiniai intervalai gerokai didesni nei pačių duomenų dispersija.
+
+4.
+```{r}
+fit4<-holt(eggs, h=100, exponential=TRUE, damped=TRUE, alpha=0.8, beta=0.001)
+plot(fit4)
+lines(fit4$fitted, col="red")
+```
+
+Su damped atsisakoma trendo, o exponential neleidžia prognozei įgyti neigiamų reikšmių.  
+Pagal grafiką panašu, kad prognozė yra tiksliausia.  
+
+Išvada: Apskritai, eksponentinis metodas netinka šiem duomenim, nes jų reikšmės mažėja.
+damped neturi prasmes, nes duomenys mazejantys, eksponentinis netinka irr taip.
+
+* Which model gives the best RMSE?
+```{r}
+accuracy(fit1)
+accuracy(fit2)
+accuracy(fit3)
+accuracy(fit4)
+```
+Geriausias RMSE gautas iš modelio fit2.
+
+* Do the residuals from the best model look like white noise?
+```{r}
+par(mfrow=c(2,1))
+Acf(fit2$residuals)
+plot(fit2$residuals)
+```
+
+Liekanos modelio fit2 atrodo kaip baltas triukšmas, ne tik iš plot, bet ir iš Afc, nes nėra reikšmingų lagų.

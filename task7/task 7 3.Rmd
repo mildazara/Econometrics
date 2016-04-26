@@ -9,7 +9,7 @@ Lab Session 2. Task 3
 Tasks reference - @Hyndman2014a
 
 Library fpp recomended for all of the tasks :
-```{r}
+```{r, message=FALSE}
 library(fpp)
 ```
 
@@ -20,6 +20,7 @@ library(fpp)
 bricks1 <- window(bricksq, end=1987.99)
 bricks2 <- window(bricksq, start=1988)
 ```
+
 * (b) Check that your data have been split appropriately by producing
 the following plot. (panaudotas kodas buvo pateiktas užduotyje)
 ```{r}
@@ -41,8 +42,7 @@ snaivem<-snaive(bricks1, h=7) #Seasonal naive  method
 plot(snaivem, xlab="Time", ylab="bricks1", main="Prognozė, naudojant Seasonal naive metodą")
 ```
 
-* (d) Compare the accuracy of your forecasts against the actual values
-stored in bricks2. (Pavyzdys naudojamas kode iš užduoties)
+* (d) Compare the accuracy of your forecasts against the actual values stored in bricks2. (Pavyzdys naudojamas kode yra iš užduoties)
 Tikslumas pagal Drift metodo prognozę:
 ```{r}
 accuracy(drift,bricks2)
@@ -59,8 +59,8 @@ Tikslumas pagal Seasonal Naive metodo prognozę:
 ```{r}
 accuracy(snaivem,bricks2)
 ```
-* (e) Which method does best? Why?
-Išvada: tiksliausias yra Seasonal Naive metodas, nes pagal accuracy Test set -  reikšmės arčiausiai 0, palyginus su kitais metodais. (Nepaisant to, kad Training set demonstruoja drift metodo tinkamumą, nepasirenkame, nes kreipiame didesnį dėmesį prognozei)
+* (e) Which method does best? Why?  
+Išvada: tiksliausias yra Seasonal Naive metodas, nes pagal accuracy Test set -  reikšmės arčiausiai 0, palyginus su kitais metodais. (Nepaisant to, kad Training set demonstruoja drift metodo tinkamumą, nepasirenkame, nes kreipiame didesnį dėmesį prognozei)  
 * (f) For the best method, compute the residuals and plot them. (Pavyzdys pateiktas užduotyje jau naudojamas)
 ```{r}
 res <- residuals(snaivem)
@@ -69,7 +69,8 @@ plot(res, ylab="Liekanos")
 hist(res, breaks="FD", ylab="Dažnumas", xlab="Liekanos")
 Acf(res)
 ```
-Do the residuals appear to be uncorrelated and normally distributed? 
+
+Do the residuals appear to be uncorrelated and normally distributed?    
 AFC parodo, kad yra autokoreliacija tarp liekanų (lag reikšmės kerta mėlyną punktyrinę liniją). 
 Panašu, kad liekanos pasiskirsčiusios normaliai, tačiau dar tikriname pagal Shapiro testą:
 ```{r}

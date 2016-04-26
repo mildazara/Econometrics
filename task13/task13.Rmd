@@ -1,0 +1,216 @@
+---
+title: "task13"
+author: "Milda Zarankaite"
+date: "Friday, April 22, 2016"
+output: html_document
+---
+Lab Session 6.
+=====
+Tasks reference - @Hyndman2014a
+
+Library fpp recomended for all of the tasks:
+```{r, message=FALSE}
+library(fpp)
+```
+
+##Uzduotis1
+For the following series, find an appropriate Box-Cox transformation and order of differencing in order to obtain stationary data.
+
+###Sprendimas
+Visos užduoties dalys daromos 2 žingsniais:   
+* Pirmiausia, ieškome tinkamos Box-Cox transformacijos (reikia  surasti ir lambda, tam kad įvykdytume tinkamą transformaciją). Po to, išbrėžiame ją su originaliais duomenimis.  
+* Antra, kuriami stacionarūs duomenys ir tikrinama pagal Kwiatkowski-Phillips-Schmidt-Shin (KPSS) testą, kur H0: duomenys yra stacionarūs ir nesezoniniai.
+
+####(a) usnetelec:
+1. Pirmiausia, ieškome tinkamos Box-Cox transformacijos (reikia  surasti ir lambda, tam kad įvykdytume tinkamą transformaciją). Po to, išbrėžiame ją su originaliais duomenimis.
+```{r}
+lambda1<-BoxCox.lambda(usnetelec)
+par(mfcol=c(2,1))
+plot(usnetelec, main="Originalūs usnetelec duomenys") 
+plot(BoxCox(usnetelec, lambda=lambda1), main="BoxCox transformuoti usnetelec duomenys")
+```
+
+Iš grafiko matome, kad pagal Box-Cox metodą, duomenys pasikeitė labai nereikšmingai. Šiems duomenims nėra labai didelės prasmės naudoti, nes duomenys nėra sezoniški.
+
+2. Antra, kuriami stacionarūs duomenys ir tikrinama pagal Kwiatkowski-Phillips-Schmidt-Shin (KPSS) testą, kur H0: duomenys yra stacionarūs ir nesezoniniai.
+```{r}
+Andiffs <- ndiffs(usnetelec) #įrašomas reikalingas skirtumų skaičius
+Astadata<-diff(usnetelec,lag=frequency(usnetelec), differences=Andiffs) #išsaugomi A dalies stationarūs duomenys
+plot(Astadata)
+kpss.test(Astadata)
+```
+
+Kadangi testo p-value>0.05, H0 - priimame, duomenys - stacionarūs ir nesezoniniai.  
+Vadinasi, Pakanka diferencijuoti su 1 skirtumu(=Andiffs)
+
+####(b) usgdp
+1. Pirmiausia, ieškome tinkamos Box-Cox transformacijos (reikia  surasti ir lambda, tam kad įvykdytume tinkamą transformaciją). Po to, išbrėžiame ją su originaliais duomenimis.
+```{r}
+lambda2<-BoxCox.lambda(usgdp)
+par(mfcol=c(2,1))
+plot(usgdp, main="Originalūs usgdp duomenys") 
+plot(BoxCox(usgdp, lambda=lambda2), main="BoxCox transformuoti usgdp duomenys") 
+```
+
+Iš grafiko matome, kad pagal Box-Cox metodą, šiems duomenims nelabai prasminga naudoti.
+
+2. Antra, kuriami stacionarūs duomenys ir tikrinama pagal Kwiatkowski-Phillips-Schmidt-Shin (KPSS) testą, kur H0: duomenys yra stacionarūs ir nesezoniniai.
+```{r}
+Bndiffs <- ndiffs(usgdp) #įrašomas reikalingas skirtumų skaičius
+Bstadata<-diff(usgdp,lag=frequency(usgdp), differences=Bndiffs) #išsaugomi B dalies stationarūs duomenys
+plot(Bstadata)
+kpss.test(Bstadata)
+```
+
+Kadangi testo p-value>0.05, H0 - priimame, duomenys - stacionarūs ir nesezoniniai.   
+Vadinasi, užtenka diferencijuoti, kai skirtumų skaičius yra 2(=Bndiffs).
+
+####(c) mcopper  
+1. Pirmiausia, ieškome tinkamos Box-Cox transformacijos (reikia  surasti ir lambda, tam kad įvykdytume tinkamą transformaciją). Po to, išbrėžiame ją su originaliais duomenimis.
+```{r}
+lambda3<-BoxCox.lambda(mcopper)
+par(mfcol=c(2,1))
+plot(mcopper, main="Originalūs mcopper duomenys") 
+plot(BoxCox(mcopper, lambda=lambda3), main="BoxCox transformuoti mcopper duomenys") 
+```
+
+Iš grafiko matome, kad pagal Box-Cox metodą, duomenis transformavo, padarė labiau reguliariais.
+
+2. Antra, kuriami stacionarūs duomenys ir tikrinama pagal Kwiatkowski-Phillips-Schmidt-Shin (KPSS) testą, kur H0: duomenys yra stacionarūs ir nesezoniniai. 
+* Iš grafiko galima būtų spėti apie sezoniškumą. Tikriname pagal stl grafiką ar jis egzistuoja.
+```{r}
+plot(stl(mcopper, s.window="periodic"))
+```
+Sezoniškumo nėra - sprendžiame iš sezoniškumo iš 2 ir 4o grafiko.  
+Diferencijuojame:
+```{r}
+Cndiffs <- ndiffs(mcopper) #įrašomas reikalingas skirtumų skaičius
+Cstadata<-diff(mcopper,lag=frequency(mcopper), differences=Cndiffs) #išsaugomi Cdalies stationarūs duomenys
+plot(Cstadata)
+kpss.test(Cstadata)
+```
+Kadangi testo p-value<0.05, H0 - atmetame, duomenys dar - nėra stacionarūs ir nesezoniniai. Diferencijuojame dar kartą
+```{r}
+C2ndiffs <- ndiffs(Cstadata) #įrašomas reikalingas skirtumų skaičius
+C2stadata<-diff(Cstadata,lag=frequency(Cstadata), differences=C2ndiffs)
+plot(C2stadata)
+kpss.test(C2stadata)
+```
+Kadangi testo p-value>0.05, H0 - jau priimame, duomenys - stacionarūs ir nesezoniniai.  
+Vadinasi, mcopper duomenys tampa stacionarūs tik po 2 diferencijavimų (Cndiffs=1,C2ndiffs=1)
+
+####(d) enplanements
+
+1. Pirmiausia, ieškome tinkamos Box-Cox transformacijos (reikia  surasti ir lambda, tam kad įvykdytume tinkamą transformaciją). Po to, išbrėžiame ją su originaliais duomenimis.
+```{r}
+lambda4<-BoxCox.lambda(enplanements)
+par(mfcol=c(2,1))
+plot(enplanements, main="Originalūs enplanements duomenys") 
+plot(BoxCox(enplanements, lambda=lambda4), main="BoxCox transformuoti enplanements duomenys") 
+```
+Iš grafiko matome, kad pagal Box-Cox metodą, duomenys tapo labiau reguliariais, suteikė pastovesnį sezoniškumą.
+
+2. Antra, kuriami stacionarūs duomenys ir tikrinama pagal Kwiatkowski-Phillips-Schmidt-Shin (KPSS) testą, kur H0: duomenys yra stacionarūs ir nesezoniniai.  
+* Iš grafiko galima būtų spėti apie sezoniškumą. Tikriname pagal stl:
+```{r}
+plot(stl(enplanements, s.window="periodic"))
+```
+Sezoniškumas pastebimas. Todėl naudojama nsdiffs funkcija sezoniniams duomenims.
+```{r}
+Dndiffs <- nsdiffs(enplanements) #įrašomas reikalingas skirtumų skaičius
+Dstadata<-diff(enplanements,lag=frequency(enplanements), differences=Dndiffs) #išsaugoma stationarūs duomenys
+plot(Dstadata)
+kpss.test(Dstadata)
+```
+Kadangi testo p-value>0.05, H0 - priimame, duomenys - stacionarūs ir nesezoniniai. enplanements duomenims užtenka pritaikyti 1 skirtumo sezoninį diferencijavimą(=Dndiffs)
+
+####(e) visitors
+
+1. Pirmiausia, ieškome tinkamos Box-Cox transformacijos (reikia  surasti ir lambda, tam kad įvykdytume tinkamą transformaciją). Po to, išbrėžiame ją su originaliais duomenimis.
+```{r}
+lambda5<-BoxCox.lambda(visitors)
+par(mfcol=c(2,1))
+plot(visitors, main="Originalūs visitors duomenys") 
+plot(BoxCox(visitors, lambda=lambda5), main="BoxCox transformuoti visitors duomenys") 
+```
+
+Iš grafiko matome, kad pagal Box-Cox metodą, duomenys tapo labiau reguliariais, sezoniškumo svyravimai pasidarė tolygesni.
+
+2. Antra, kuriami stacionarūs duomenys ir tikrinama pagal Kwiatkowski-Phillips-Schmidt-Shin (KPSS) testą, kur H0: duomenys yra stacionarūs ir nesezoniniai.
+* Iš grafiko galima būtų spėti apie sezoniškumą. Tikriname pagal stl:
+```{r}
+plot(stl(visitors, s.window="periodic"))
+```
+Sezoniškumas pastebimas. Todėl naudojama nsdiffs funkcija sezoniniams duomenims.
+```{r}
+Endiffs <- nsdiffs(visitors) #įrašomas reikalingas skirtumų skaičius
+Estadata<-diff(visitors,lag=frequency(visitors), differences=Endiffs) #išsaugoma stationarūs duomenys
+plot(Estadata)
+kpss.test(Estadata)
+```
+Kadangi testo p-value>0.05, H0 - priimame, duomenys - stacionarūs ir nesezoniniai. Visitors duomenims užtenka pritaikyti 1 skirtumo diferencijavimą(=Endiffs)
+
+* Išvada: BoxCox duomenyse išsaugo trendą, sumažina reikšmes ir padaro duomenų sezoniškumą labiau reguliariais. Tačiau nėra didelės naudos jį naudoti nesezoniniams duomenims. Stacionarius duomenis galima sukurti randant skirtumus su ndiffs funkcija, bei tą skaičių pritaikius funkcijai diff, kuri gražina tinkamai "sulaikytus" duomenis su kartotiniais skirtumais.
+
+##Užduotis2
+Why is a Box-Cox transformation unhelpful for the cangas data?  
+###Atsakymas:  
+* Ieškome tinkamos Box-Cox transformacijos (reikia  surasti ir lambda, tam kad įvykdytume tinkamą transformaciją). Po to, išbrėžiame ją su originaliais duomenimis.
+```{r}
+lambdacan<-BoxCox.lambda(cangas)
+par(mfcol=c(2,1))
+plot(cangas, main="Originalūs cangas duomenys") 
+plot(BoxCox(cangas, lambda=lambdacan), main="BoxCox transformuoti cangas duomenys") 
+```
+Box.Cox transformacija pagal formulę duomenis paverčia labiau reguliariais. To su šiais duomenimis padaryti nėra pasmės, nes svyravimai didžiausi viduryje, o ne duomenų pradžioje/pabaigoje. 
+
+
+##Užduotis3
+Download the data at http://robjhyndman.com/data/retail.xls. Choose one of the series and find an appropriate Box-Cox transformation and order of differencing in order to obtain stationary data.  
+
+* Pasirenkami, stuvarkomi duomenys (pasirenkama 2 series stulpelis: Turnover ;  New South Wales ;  Supermarket and grocery stores )
+```{r}
+setwd("~/Econometrics/task13")
+datafull<-read.csv2("retaila.csv", header=T) #duomenys ištrynus antrą eilutę
+data<-datafull[,c(1:2)] #parinkti reikalingi duomenys
+colnames(data)<-c("Time", "Turnover")
+```
+Kuriamos laiko eilutės (antro stulpelio)
+```{r}
+series<-data[,c(2)] #paimamas 2 stulpelis
+duom<-ts(series, start=c(1982, 4), end=c(2007, 12), frequency=12) #sudaroma laiko eilutė 
+plot(duom)
+```
+
+*Ieškoma tinkama Box-Cox transformacija.    
+Reikia  surasti ir lambda, tam kad įvykdytume tinkamą transformaciją. Po to, išbrėžiame ją su originaliais duomenimis.
+```{r}
+lambdaduom<-BoxCox.lambda(duom)
+par(mfcol=c(2,1))
+plot(duom, main="Originalūs Turnover duomenys") 
+plot(BoxCox(duom, lambda=lambdaduom), main="BoxCox transformuoti Turnover duomenys") 
+```
+
+Iš grafiko matome, kad pagal Box-Cox metodą, duomenys tapo labiau reguliariais.
+
+* Kuriami stacionarūs duomenys ir tikrinama pagal Kwiatkowski-Phillips-Schmidt-Shin (KPSS) testą, kur H0: duomenys yra stacionarūs ir nesezoniniai.
+* Iš grafiko galima būtų spėti apie sezoniškumą. Tikriname pagal stl:
+```{r}
+plot(stl(duom, s.window="periodic"))
+```
+Sezoniškumas pastebimas. Todėl naudojama nsdiffs funkcija sezoniniams duomenims.
+```{r}
+duomndiffs <- nsdiffs(duom) #įrašomas reikalingas skirtumų skaičius
+staduom<-diff(duom,lag=frequency(duom), differences=duomndiffs) #išsaugomi stationarūs duomenys
+plot(staduom)
+kpss.test(staduom)
+```
+p value<0.05, tai H0 atmetame. Duomenys dar netapo stacionarūs. Dar kartą taikome diferencijavimą (tik šį kartą jau nebe sezonišką, nes į tai jau atsižvelgta diferencijuojant pirmą kartą)
+```{r}
+duom2ndiffs <- ndiffs(staduom) #įrašomas reikalingas skirtumų skaičius
+sta2duom<-diff(staduom,lag=frequency(staduom), differences=duom2ndiffs) #išsaugomi stationarūs duomenys
+plot(sta2duom)
+kpss.test(sta2duom)
+```
+p value > 0.05, H0 priimame - duomenys stacionarūs ir nesezomiški.   
+Vadinasi, 5ios dalies retail duomenims reikia pritaikyti 2 diferencijavimus: sezoninį 1 skirtumo ir paprastą 1 skirtumo diferencijacvimą.

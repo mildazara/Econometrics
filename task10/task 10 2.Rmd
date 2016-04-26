@@ -1,0 +1,71 @@
+---
+title: "task 10 2"
+author: "Milda Zarankaite"
+date: "Monday, April 18, 2016"
+output: html_document
+---
+
+Lab Session 3. Task 1
+=====
+Tasks reference - @Hyndman2014a
+
+Library fpp recomended for all of the tasks :
+```{r, message=FALSE}
+library(fpp)
+```
+
+####2. For this exercise, use the monthly Australian short-term overseas visitors data, May 1985–April 2005. (Data set: visitors.)
+* (a) Make a time plot of your data and describe the main features of the series.
+```{r}
+plot(visitors)
+```
+
+There is a noticeable increasing trend during this period. Moreover,the seasonality is significant too.
+
+* (b) Forecast the next two years using Holt-Winters’ multiplicative method.
+```{r}
+foreb<-hw(visitors, h=24, seasonal="mult")
+plot(foreb)
+```
+
+The forecast uses seasonal method so the forecast seems very accurate.
+
+* (c) Why is multiplicative seasonality necessary here?
+
+The multiplicative seasonality is necessary here as there is a noticeable increasing trend in the data. (The multiplicative seasonality uses the trend in the data when additive seasonality uses only the features from seasonality )
+
+* (d) Experiment with making the trend exponential and/or damped. (using 120 periods in order to see significant forecast )
+```{r}
+par(mfrow=c(2,2))
+fore1<-hw(visitors, h=120, seasonal="mult")
+plot(fore1)
+
+fore2<-hw(visitors, h=120, seasonal="mult", exponential=TRUE)
+plot(fore2)
+
+fore3<-hw(visitors, h=120, seasonal="mult", damped=TRUE)
+plot(fore3) 
+
+fore4<-hw(visitors, h=120, seasonal="mult", exponential=TRUE, damped=TRUE)
+plot(fore4)
+```
+
+As we can see from 1st graph Holt-Winters method seasonal multiplicative forecast increases. In the 2nd exponential graph the forecast is increasing, but confidence intervals seems to be much bigger, comparing to values variance (it depends on alpha). 3rd and 4th graph forecast looks almost the same as damped method decreases the importance of trend.
+
+* (e) Compare the RMSE of the one-step forecasts from the various methods. Which do you prefer?
+```{r}
+accuracy(fore1)
+accuracy(fore2)
+accuracy(fore3)
+accuracy(fore4)
+```
+From the RMSE and other factors we can notice that the 3rd method (only damped=TRUE) is the most accurate.
+
+* (f) Check that the residuals from the best model look like white noise.
+```{r}
+par(mfrow=c(2,1))
+plot(fore3$residuals)
+Acf(fore3$residuals)
+```
+
+From residuals plot it seems as it might be white noise. Afc graph does not show significant autocorrelation so residuals can be accepted as white noise. 

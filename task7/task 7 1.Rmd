@@ -9,7 +9,7 @@ Lab Session 2. Task 1
 Tasks reference - @Hyndman2014a
 
 Library fpp recomended for all of the tasks :
-```{r}
+```{r, message=FALSE}
 library(fpp)
 ```
 
@@ -23,6 +23,7 @@ The function tsdisplay(data, plot.type="scatter") is useful for showing a time p
 ```{r}
 tsdisplay(bricksq, plot.type="scatter")
 ```
+
 Galime nustatyti 4lago sezoniškumą duomenų kasmetinio svyravimo iš AFC/Lag grafiko. 
 Pastebimas didėjantis trendas iki 1975 metų, po jų iki 1994 stebimas svyravimas.
 Duomenis galime suskirstyti į 3 ciklus. Pirmajame (nuo 1956 iki 1975) duomenų reikšmė kyla, tada įvyksta staigus kritimas. Antrąjame (nuo 1975 iki 1983) stebimas atsigavimas ir sezoniškas kilimas iki ciklo galo. Trečiąjame (1983-1994) vėl stebimas atsigavimas po kritimo, tačiau ciklo gale vėl nustatomas staigus kritimas. 
@@ -32,6 +33,7 @@ Duomenis galime suskirstyti į 3 ciklus. Pirmajame (nuo 1956 iki 1975) duomenų 
 ```{r}
 tsdisplay(hsales, plot.type="scatter")
 ```
+
 Iš duomenų pastebimas aiškus sezoniškumas. 
 Trendo nėra - vyksta nuolatiniai svyravimai. 
 Galima išskirti 2 ciklus : 1973-1983 ir 1983-1995, nes apie 1983 metus įvyksta duomenų reikšmių kritimas.
@@ -41,6 +43,7 @@ Galima išskirti 2 ciklus : 1973-1983 ir 1983-1995, nes apie 1983 metus įvyksta
 ```{r}
 tsdisplay(ibmclose, plot.type="scatter")
 ```
+
 Sezoniškumas nėra aiškiai pastebimas.
 Trendą galime skirstyti į 3 etapus: 1)lėtas duomenų reikšmių kilimas iki 110. 2) 110-270 - kritimas, kuris yra ryškesnis jau nuo 230. 3) 270-370 - duomenų reikšmių atsigavimas po kritimo.
 Pastebiu 2 ciklus: iki 270 ir nuo 270, kadangi šiame indekse duomenys pasiekia savo minimumą. 
