@@ -1,0 +1,145 @@
+---
+title: "task15"
+author: "Milda Zarankaite"
+date: '2016 m gegužė 8 d '
+output: html_document
+---
+Lab Session 8.
+=====
+Tasks reference - @Hyndman2014a
+
+Library fpp used in the tasks:
+```{r, message=FALSE}
+library(fpp)
+```
+ 
+###Task1  
+ **Choose one of the following seasonal time series: condmilk, hsales, uselec:**  
+Decided to work with uselec time series:
+```{r, echo=FALSE}
+plot(uselec, main="Original uselec data", col="blue")
+```
+
+ **(a) Do the data need transforming? If so, find a suitable transformation. ** 
+Checking the data with Box-Cox transformation:
+```{r}
+lambda1<-BoxCox.lambda(uselec)
+plot(BoxCox(uselec, lambda1), main="uselec data with BoxCox transformation")
+```
+
+The transformation made the data more regular (normally distributed). So the decision was to stay with transformed data and name it "uselec_t"
+```{r}
+uselec_t<-BoxCox(uselec, lambda1)
+```
+
+ **(b) Are the data stationary? If not, find an appropriate differencing which yields stationary data.  **
+The data is not stationary - it has an increasing trend. In order to that - differencing is needed.
+The transformed data is seasonal (it is noticeable from slt graph, comparing seasonal and remainder windows):
+```{r}
+plot(stl(uselec_t, s.window = "periodic"))
+```
+
+In order to seasonality, nsdiffs function is used to estimate the number of seasonal differences required to make the uselec_t  time series stationary:
+```{r}
+ndif<-nsdiffs(uselec_t)
+uselec_sta<-diff(uselec_t, lag = frequency(uselec_t), differences = ndif)
+plot(uselec_sta)
+```
+
+Checking the data with Kwiatkowski-Phillips-Schmidt-Shin (KPSS) test  for the null hypothesis: uselec_sta is level or trend stationary:
+```{r}
+kpss.test(uselec_sta)
+```
+As p-value>0.05, H0 is accepted - data uselec_sta is stationary.   
+
+ **(c) Identify a couple of ARIMA models that might be useful in describing the time series. Which of your models is the best according to their AIC values? **
+Our aim is to find an appropriate model ARIMA model based on ACF and PACF:
+```{r}
+tsdisplay(uselec_sta)
+```
+
+Firstly, checking auto.arima result:
+```{r}
+fit1<-auto.arima(uselec_sta)
+fit1
+```
+Outcome - the best model  fit1 - ARIMA(1,0,2)(2,0,1)[12] with non-zero mean. (number of differences are 0 because the data is already transformed). Trying other ARIMA models, varying p,P and/or q,Q from the current model by +-1. 10 variations were made, but here you can see some examples because other models did not give better AIC:
+```{r}
+fit2 <- Arima(uselec_sta, order=c(0,0,3), seasonal=c(2,0,1))
+fit3 <- Arima(uselec_sta, order=c(0,0,1), seasonal=c(2,0,1))
+fit4 <- Arima(uselec_sta, order=c(2,0,3), seasonal=c(2,0,1))
+fit5 <- Arima(uselec_sta, order=c(1,0,2), seasonal=c(1,0,1))
+fit6 <- Arima(uselec_sta, order=c(1,0,2), seasonal=c(3,0,0))
+```
+
+* Checking AIC of the models:
+```{r, echo=FALSE}
+tabnames<-c("fit1", "fit2","fit3","fit4","fit5","fit6")
+tabaic<-c(AIC(fit1),AIC(fit2),AIC(fit3),AIC(fit4), AIC(fit5),AIC(fit6))
+tab<-data.frame(tabnames,tabaic)
+colnames(tab)<-c("Model","AIC")
+tab
+```
+
+* Checking accuracy of the models
+```{r, echo=FALSE}
+ans = rbind(
+  accuracy(fit1),
+  accuracy(fit2),
+  accuracy(fit3),
+  accuracy(fit4),
+  accuracy(fit5),
+  accuracy(fit6)
+)
+rownames(ans) <- tabnames
+ans
+```
+According to least AIC and accuracy measures, the best model is fit1 - ARIMA(1,0,2)(2,0,1)[12] with non-zero mean.  
+
+ **(d) Estimate the parameters of your best model and do diagnostic testing on the residuals. Do the residuals resemble white noise?  **
+Estimating the parameters of model fit1:  
+```{r, echo=FALSE}
+fit1
+```
+ARIMA(1,0,2)(2,0,1)[12] with non-zero mean
+
+
+* Diagnostic testing on the residuals:
+```{r, echo=FALSE}
+par(mfcol=c(2,1))
+plot(fit1$residuals, main="Residuals of fit1")
+Acf(residuals(fit1))
+```
+
+From residuals of fit1 graph it seems that residuals are white noise. ACF graph demonstrates significant lag only at 11th.
+Checking residuals with Ljung-Box test ( H0: independence in a given time series (this time - fit1 residuals))
+```{r}
+Box.test(residuals(fit1), type="Ljung-Box")
+```
+As p-value>0.05 - H0 is accepted. Residuals of model fit1 can be accepted as white noise. 
+
+If not, try to find another ARIMA model which fits better. - NOPE  
+
+ **(e) Forecast the next 24 months of data using your preferred model.  **
+```{r}
+fit_for<-Arima(uselec, order=c(1,0,2), seasonal=c(2,0,1), lambda=lambda1)
+plot(forecast(fit_for, h=24))
+```
+
+Forecast looks quite accurate and confidence intervals look reasonable comparing to the uselec data.  It also takes into account seasonality.  
+ **(f) Compare the forecasts obtained using ets().**
+```{r}
+plot(forecast(ets(uselec), h=24))
+```
+
+Forecast using ets() also look quite reasonable and similar to forecast with Arima model.  
+
+Comparing AIC of ETS and best Arima models:
+```{r, echo=FALSE}
+tabaic<-c("ETS model","Arima model")
+tabname<-c(AIC(ets(uselec)),AIC(fit_for))
+tab<-data.frame(tabaic,tabname)
+colnames(tab)<-c("MODEL","AIC")
+tab
+```
+AIC of Arima model is smaller. As a result, I think ARIMA model fit1 shows more accurate forecast.

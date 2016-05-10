@@ -1,0 +1,285 @@
+---
+title: "task14"
+author: "Milda Zarankaite"
+date: "Tuesday, May 03, 2016"
+output: html_document
+---
+Lab Session 7.
+=====
+Tasks reference - @Hyndman2014a
+
+Library fpp used in the tasks:
+```{r, message=FALSE}
+library(fpp)
+```
+ 
+###Task 1: 
+####For the wmurders data: 
+```{r, echo=FALSE}
+plot(wmurders, main="wmurders data")
+```
+
+**(a) if necessary, find a suitable Box-Cox transformation for the data;**
+```{r}
+lambda1<-BoxCox.lambda(wmurders)
+plot(BoxCox(wmurders, lambda=lambda1), main="BoxCox transformed wmurders data")
+```
+
+From the graph we can notice that transformation in not necessary for the data, because it is not seasonal and does not make significant changes. The decision was to stay with original data for the following tasks.  
+
+**(b) fit a suitable ARIMA model to the transformed data using auto.arima();**
+```{r}
+auto.arima(wmurders)
+```
+auto.arima() chose model ARIMA(1,2,1). 
+
+**(c) try some other plausible models by experimenting with the orders chosen;**
+Variations on the current model are considered by varying p and/or q from the current model by  ±1: 
+```{r}
+mod1<-Arima(wmurders, order = c(0,2,1))
+mod2<-Arima(wmurders, order = c(0,2,2))
+mod3<-Arima(wmurders, order = c(2,2,1))
+mod4<-Arima(wmurders, order = c(2,2,0))
+```
+
+**(d) choose what you think is the best model and check the residual diagnostics;**
+The best model is considered from AIC and accuracy(in-sample) quality index:  
+1. The best model is considered the one which has the least AIC:
+```{r, echo=FALSE}
+tabmod<-c("Model(0,2,1)","Model(0,2,2)","Model(2,2,1)","Model(2,2,0)", "Model b)(1,2,1)")
+tabaic<-c(AIC(mod1),AIC(mod2),AIC(mod3),AIC(mod4),AIC(auto.arima(wmurders)))
+tab<-data.frame(tabmod,tabaic)
+colnames(tab)<-c("Model","AIC")
+tab
+```
+According to AIC,  model 3 - ARIMA(2,2,1) is the best. (Remark: it is even better than auto.arima considered model (1,2,1))  
+2. Checking accuracy of the models:
+```{r, echo=FALSE}
+ans1 = rbind(
+  accuracy(mod1),
+  accuracy(mod2),
+  accuracy(mod3),
+  accuracy(mod4),
+  accuracy(auto.arima(wmurders))
+)
+rownames(ans1) <- c("Model(0,2,1)","Model(0,2,2)","Model(2,2,1)","Model(2,2,0)", "Model b)(1,2,1)")
+ans1
+```
+Checking output  of  the accuracy table - it is hard to notice significant differences.  As  a result - model 3 was  chosen for further diagnostics.
+
+mod3-ARIMA(2,2,1) residuals diagnostics:
+```{r, echo=FALSE}
+par(mfcol=c(2,1))
+plot(mod3$residuals, main="Residuals of mod3")
+Acf(residuals(mod3))
+```
+
+From the first graph the residuals seems like white noise. ACF also shows no significant autocorrelation of used residuals.  
+Checking residuals with Ljung-Box test ( H0: independence in a given time series (this time - mod3 residuals))
+```{r}
+Box.test(residuals(mod3), type="Ljung-Box")
+```
+As p-value>0.05 - H0 is accepted. According to the graph, ACF and Ljung-Box test, the residuals of mod3 are white noise.  
+
+**(e) produce forecasts of your fitted model. Do the forecasts look reasonable?**
+```{r}
+plot(forecast(mod3, h=10))
+```
+
+Forecast follows decreasing trend from last years of given wmurder data. Although confidence interval is bigger than data distribution, they look reasonable as model takes into account all changes during given period of time. In order to it - I would say that forecast looks reasonable.
+
+**(f) compare the results with what you would obtain using ets() (with no transformation).**
+```{r}
+plot(forecast(ets(wmurders),h=10))
+```
+
+Here ETS forecast depends only on the last observation , but confidence interval is smaller comparing to forecast from mod3. And it does not respects biggest values changes in the given period of time.
+
+
+
+###Task 2:
+####For the usggdp data: 
+```{r, echo=FALSE}
+plot(usgdp, main="usdgp data")
+```
+
+**(a) if necessary, find a suitable Box-Cox transformation for the data;**
+```{r}
+lambda2<-BoxCox.lambda(usgdp)
+plot(BoxCox(usgdp, lambda=lambda2), main="BoxCox transformed usgdp data")
+```
+
+From the graph we can notice that transformation in not necessary for the data, because it does not make significant changes, but makes the trend more linear. The decision was to stay with original data for the following tasks in order not to lose important information from the data.
+
+**(b) fit a suitable ARIMA model to the transformed data using auto.arima();**
+```{r}
+auto.arima(usgdp)
+```
+auto.arima() chose model ARIMA(2,2,2). 
+
+**(c) try some other plausible models by experimenting with the orders chosen;**
+Variations on the current model are considered by varying p and/or q from the current model by ±1:
+```{r}
+mod1_2<-Arima(usgdp, order = c(3,2,1))
+mod2_2<-Arima(usgdp, order = c(3,2,3))
+mod3_2<-Arima(usgdp, order = c(1,2,1))
+mod4_2<-Arima(usgdp, order = c(1,2,3))
+```
+
+**(d) choose what you think is the best model and check the residual diagnostics;**
+The  best model is considered the one which has the least AIC and the best accuracy(in sample index):    
+1. Checking AIC:
+```{r, echo=FALSE}
+tabmod2<-c("Model(3,2,1)","Model(3,2,3)","Model(1,2,1)","Model(1,2,3)", "Model b)(2,2,2)")
+tabaic2<-c(AIC(mod1_2),AIC(mod2_2),AIC(mod3_2),AIC(mod4_2),AIC(auto.arima(usgdp)))
+tab2<-data.frame(tabmod2,tabaic2)
+colnames(tab2)<-c("Model","AIC")
+tab2
+```
+According to AIC,  model chose by auto.arima in part b - ARIMA(2,2,2) is the best. 
+2. Checking accuracy of the models:
+```{r, echo=FALSE}
+ans2 = rbind(
+  accuracy(mod1_2),
+  accuracy(mod2_2),
+  accuracy(mod3_2),
+  accuracy(mod4_2),
+  accuracy(auto.arima(usgdp))
+)
+rownames(ans2) <- tabmod2
+ans2
+```
+Checking output  of  the accuracy table - it is not possible to see significant diference. So choosing the model that has the  least AIC - model ARIMA(2,2,2).  
+
+Model ARIMA(2,2,2) (named modb), residuals diagnostics:
+```{r, echo=FALSE}
+modb<-auto.arima(usgdp)
+par(mfcol=c(2,1))
+plot(modb$residuals, main="Residuals of modb")
+Acf(residuals(modb))
+```
+
+From the first graph the residuals might like white noise. ACF shows 2 slight autocorrelation lags at 8 and 12 of used residuals.  
+Checking modb residuals with Ljung-Box test where H0: independence in a given time series (this time - modb residuals)
+```{r}
+Box.test(residuals(modb), type="Ljung-Box")
+```
+As p-value>0.05 - H0 is accepted. According to the graph, ACF and Ljung-Box test, the residuals of modb are white noise.  
+
+**(e) produce forecasts of your fitted model. Do the forecasts look reasonable?**
+```{r}
+plot(forecast(modb, h=15))
+```
+
+Forecast follows increasing trend from last years of given usgdp data. Confidence interval does look reliable - expands slightly. I would say that the forecasts look reasonable.  
+
+**(f) compare the results with what you would obtain using ets() (with no transformation).**
+```{r}
+plot(forecast(ets(usgdp),h=15))
+```
+
+Here ETS forecasts increase more and confidence intervals are wider, comparing with modb.  
+Comparing AIC of ETS and best Arima models:
+```{r, echo=FALSE}
+tabaic3<-c("ETS model","Arima(2,2,2)")
+tabname3<-c(AIC(ets(usgdp)),AIC(modb))
+tab3<-data.frame(tabaic3,tabname3)
+colnames(tab3)<-c("MODEL","AIC")
+tab3
+```
+AIC of Arima(2,2,2) model is better. So outcome of this task - the best model for usgdp data ir ARIMA (2,2,2)
+
+
+
+###Task 3:
+####For the mcopper data: 
+```{r, echo=FALSE}
+plot(mcopper, main="mcopper data")
+```
+
+**(a) if necessary, find a suitable Box-Cox transformation for the data;**
+```{r}
+lambda3<-BoxCox.lambda(mcopper)
+plot(BoxCox(mcopper, lambda=lambda3), main="BoxCox transformed mcopper data")
+```
+
+Box-Cox transformation made the data more "regular" (more normally distributed). Transformed data (mcoppert) will be used for further analysis.
+
+**(b) fit a suitable ARIMA model to the transformed data using auto.arima();**
+```{r}
+mcoppert<-BoxCox(mcopper, lambda = lambda3)
+auto.arima(mcoppert)
+```
+auto.arima() chose model ARIMA(0,1,1). 
+
+**(c) try some other plausible models by experimenting with the orders chosen;**  
+Variations on the current model are considered by varying p and/or q from the current model by ±1:
+```{r}
+mod1_3<-Arima(mcoppert, order = c(1,1,1))
+mod2_3<-Arima(mcoppert, order = c(1,1,0))
+mod3_3<-Arima(mcoppert, order = c(1,1,2))
+```
+
+**(d) choose what you think is the best model and check the residual diagnostics;**  
+The  best model is considered the one which has the least AIC and accuracy(in sample) index:  
+1. Checking AIC:
+```{r, echo=FALSE}
+tabmod4<-c("Model(1,1,1)","Model(1,1,0)","Model(1,1,2)","Model b)(0,1,1)")
+tabaic4<-c(AIC(mod1_3),AIC(mod2_3),AIC(mod2_3),AIC(auto.arima(mcoppert)))
+tab4<-data.frame(tabmod4,tabaic4)
+colnames(tab4)<-c("Model","AIC")
+tab4
+```
+According to AIC,  model chose by auto.arima in part b - ARIMA(0,1,1) is the best.  
+2. Checking accuracy of the models:
+```{r, echo=FALSE}
+ans3 = rbind(
+  accuracy(mod1_3),
+  accuracy(mod2_3),
+  accuracy(mod2_3),
+  accuracy(auto.arima(mcoppert))
+)
+rownames(ans3) <- tabmod4
+ans3
+```
+Checking output  of  the accuracy table - differences are not significant, but model ARIMA(0,1,1) has the least index in most cases. So choosing the model which has the least AIC and best accuracy - model ARIMA(0,1,1).  
+Model ARIMA(0,1,1) (named modc), residuals diagnostics:
+```{r, echo=FALSE}
+modc<-auto.arima(mcoppert)
+par(mfcol=c(2,1))
+plot(modc$residuals, main="Residuals of model ARIMA(0,1,1")
+Acf(residuals(modc))
+```
+
+From the first graph the residuals seem like the white noise. ACF shows no autocorrelation of used residuals.  
+Checking modc residuals with Ljung-Box test where H0: independence in a given time series (this time - modc residuals)
+```{r}
+Box.test(residuals(modc), type="Ljung-Box")
+```
+As p-value>0.05 - H0 is accepted. According to the graph, ACF and Ljung-Box test the residuals of modc are white noise.  
+
+**(e) produce forecasts of your fitted model. Do the forecasts look reasonable?**  
+Original data is used for forecast.
+```{r}
+mode<-Arima(mcopper, order=c(0,1,1), lambda=lambda3)
+plot(forecast(mode, h=15))
+```
+
+Forecast follows only the last observation of transformed mcopper data. Confidence interval does not look reliable (looks too small) because a sharp increase in the end of the period seems random. I would say that the forecasts does not look reasonable.  
+
+**(f) compare the results with what you would obtain using ets() (with no transformation).**
+```{r}
+plot(forecast(ets(mcopper),h=15))
+```
+
+Here ETS forecasts follows 5 last months of 2006 decreasing trend. Confidence intervals are wider comparing with the best arima model, but look reasonable    
+Comparing AIC of ETS and best Arima models:
+```{r, echo=FALSE}
+tabaic5<-c("ETS model","Arima(0,1,1) model")
+tabname5<-c(AIC(ets(mcopper)),AIC(mode))
+tab5<-data.frame(tabaic5,tabname5)
+colnames(tab5)<-c("MODEL","AIC")
+tab5
+```
+AIC of Arima(0,1,1) model is better. So the  outcome of this task - mcopper data should be transformed with Box-Cox and  the best model is ARIMA (0,1,1).
+
