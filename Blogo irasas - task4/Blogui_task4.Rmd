@@ -7,63 +7,81 @@ output: html_document
 #Tiesinė regresija
 
 Statistikos ir ekonomikos tyrimuose neretai siekiama ištirti reiškinių priklausomybę, pavyzdžiui:   
-* Koks parduodamų ledų kiekis priklausomai nuo oro temperatūros?  
-* Ar bakalaro darbo įvertinimas turi įtakos darbo užmokesčiui?  
+* Kaip parduodamų ledų kiekis priklauso nuo oro temperatūros?  
+* Ar bakalauro darbo įvertinimas turi įtakos darbo užmokesčiui?  
 * ...  
   
-Šias priklausomybes galima nustatyti, sudarydami regresijos modelį. 
-Regresija yra tiesinė, kai vienas kintamasis nuo kito priklauso tiesiškai. Bendriausias regresijos modelis, siejantis X ir Y  
+    
+Šias priklausomybes galima nustatyti regresinės analizės pagalba. Sudaromas regresinis modelis - statistinis modelis, padedantis nustatyti vieno kintamojo priklausomybę nuo kito. 
+Regresija yra tiesinė, kai vienas kintamasis nuo kito priklauso tiesiškai. Tarkime, kad mūsų duomenis sudaro $n$ porų : ${(x_i,y_i), i=1,..,k}$.
+Bendriausias regresijos modelis, siejantis kiekvieną $x$ ir $y$:
 
 
-$$Y={\alpha}+{\beta}X+e$$,   
+$$Y={\alpha}+{\beta}X+{\epsilon},$$     
 
 
-kur $Y$ - priklausomas kintamasis,  
-$X$ - nepriklausomas kintamasis,  
-${\alpha}$ ir ${\beta}$ - konstantos,   
-$e$ - atsitiktinė paklaida.   
+kur $Y=(y_1, y_2,.., y_k)^T$ - priklausomo kintamasojo reikšmių vektorius, $^T$ -transponuota,   
+$X=(x_1,x_2,...,x_k)^T$ - nepriklausomo kintamamojo reikšmių vektorius,  
+${\alpha}$ ir ${\beta}$ - konstantos.   
+${\epsilon}=(e_1,e_2,..,e_k)$ - atsitiktinių paklaidų vektorius.  
 
-**Tiesinė daugialypė regresija** tiriama, kai vieną priklausomąjį kintamąjį $Y$ sieja tiesinė priklausomybė su $n$ nepriklausomų kintamųjų $(X_1,X_2,..,X_n)$. Tuomet tiesinė daugialypė regresija išreiškiama:  
+Regresijos tikslas yra surasti lygtį $\hat{Y}=\hat{\alpha}+\hat{\beta}X+\hat{\epsilon}$, kuri "geriausiai" atitiktų turimus duomenis. Tiksliausia lygtis randama Mažiausių kvadratų metodu: išbrėžiama tiesė, kuri minimizuoja paklaidų kvadratų sumą nuo tiesinio regresinio modelio. ${\alpha}$ tampa konstanta, o ${\beta}$  - krypties koeficientu. 
 
-
-$$Y_i={\alpha}+{\beta}_1X_{2i}+{\beta}_2X_{2i}+...+{\beta}_kX_{ki}+e_i$$
-
-
-čia $Y_i$ – kintamojo Y i-oji reikšmė, kurią norime prognozuoti esant fiksuotoms nepriklausomų kintamųjų reikšmėms $X_1=x_{1i}$, $...$ , $X_{k}=x_{ki}$ ; ${\alpha}$, ${\beta}_1$, ${\beta}_2$, ... , ${\beta}_k$ yra nežinomi koeficientai, $e_i$ -atsitiktinė paklaida.
+**Tiesinė daugialypė regresija** tiriama, kai vieną priklausomąjį kintamąjį $Y=(y_1, y_2,.., y_k)^T$ sieja tiesinė priklausomybė su $n$ nepriklausomų kintamųjų $X=(X_1,X_2,..,X_n)^T$. Tuomet tiesinė daugialypė regresija išreiškiama:  
 
 
-?? Regresijos analizei naudojami **duomenys** - intervaliniai kintamieji :$(x_{1},y_{1})$, $(x_{2},y_{2})$, $...$ , $(x_{n},y_{n})$. 
+$$Y={\alpha}+{\beta}_1X_1+{\beta}_2X_2+...+{\beta}_nX_n+e={\alpha}+{\beta}X+{\epsilon}$$ ,      
 
 
-[Mažiausių kvadratų metodu](https://en.wikipedia.org/wiki/Least_squares) rasdami tokius ${\alpha}$ ir ${\beta}$ įverčius $\hat{\alpha}$, $\hat{\beta}$, kad $\hat{y}(x)=\hat{\alpha}+\hat{\beta}x$ taškuose $x_i$ kuo mažiau skirtųsi nuo $y_i$, gauname **regresijos tiesės lygtį**.
+čia $X$ nepriklausomų kintamųjų matrica, kurią  sudaro:   
+$\vec{X_1}=(x_{11},x_{12},...,x_{1n})$,  
+$\vec{X_2}=(x_{21},x_{22},...,x_{2n})$,  
+... ,   
+$\vec{X_k}=(x_{k1},x_{k2},...,x_{kn})$;  
+${\alpha}$, $\vec{\beta}=({\beta}_1,{\beta}_2,...,{\beta}_k)^T$ yra nežinomos konstantos,    
+${\epsilon}$ - atsitiktinė paklaida. 
+ 
+Tikslas - **regresijos tiesės lygtis**, t.y.  rasti tokius ${\alpha}$ ir ${\beta}$ įverčius $\hat{\alpha}$, $\hat{\beta}$, kad    
 
-Dydis $e_i=y_{i}-\hat{y}(x_i)=y_{i}-(\hat{\alpha}+\hat{\beta}x_i)$ vadinamas i-ąja liekamąja paklaida, $i=1,2,…,n$.
 
-Viena pagrindinė tiesinių regresinių modelių nauda - priklausomojo kintamojo prognozė. T.y. atradę tiesinę priklausomybę, galime nustatyti, kaip keisis $Y$ reikšmė, pakeitus nepriklausomąjį kintamąjį - $X$ vienu vienetu.   
+$$\hat{Y}=\hat{\alpha}+\hat{\beta}_1X_1+\hat{\beta}_2X_2+...+\hat{\beta}_kX_n+\hat{\epsilon}$$ ,  
 
-Daugiau informacijos apie tiesinius regresinius modelius galima rasti [wikipedia.org](https://en.wikipedia.org/wiki/Linear_regression#Simple_and_multiple_regression)
+paklaidos $\vec{e}=(e_1,e_2,...,e_k)$  būtų mažiausios.
+$\vec{\epsilon}=Y-\hat{Y}=Y-(\hat{\alpha}+\hat{\beta}X)$ ,   
+vadinamas atsitiktine liekamąja paklaida, kiekvienam $i=1,2,…,k$.  
 
-Šiame įraše, pateikiamas pavyzdys kaip altiekama išsami tiesinė regresija naudojantis statistine programa R.
+Įvertinimas daromas naudojantis [mažiausių kvadratų metodu](https://en.wikipedia.org/wiki/Least_squares).
+
+Viena pagrindinė tiesinių regresinių modelių nauda - priklausomojo kintamojo prognozė. T.y. atradę tiesinę priklausomybę, galime nustatyti, kaip keisis $Y$ reikšmė, pakeitus nepriklausomąjį kintamąjį $X$. 
+
+  
+
+Šiame įraše pateikiamas pavyzdys kaip atliekama išsami tiesinė regresija naudojantis statistine programa R.
+
 
 ###Pavyzdys  
-Turimi duomenys -  nekilnojamojo turto (gyvenamųjų butų) kainos ir kaikurios jų charakteristikos. Tikslas - sumodeliuoti tiesinę regresiją prekyboms agentams, kad geriau suprastų kokią įtaką skirtingos charakteristikos daro galutinei kainai.
+Turimi duomenys -  nekilnojamojo turto (gyvenamųjų butų) kainos ir keletas jų charakteristikų. Tikslas - sumodeliuoti tiesinę regresiją, kuri padėtų prekybos agentams geriau suprasti kokią įtaką skirtingos charakteristikos daro galutinei būsto kainai.
 
 ####1.Duomenys:  
-1.1.Susipažįstama su duomenimis:
+**1.1.** Susipažįstama su duomenimis:
 ```{r, message=FALSE}
-library("car")# instaliuojama analizei reikalinga "car" biblioteka
+#instaliuojamos analizei reikalingos bibliotekos
+library(car)
+library(knitr) 
 ```
 ```{r, echo=FALSE}
 setwd("~/Econometrics/Blogo irasas - task4")
 datafull<-read.csv2("data.csv") 
 head(datafull)
 ```
-Pateikiamos charakteristikos: plotas, aukštas, garsoIzoliacija, silmosLaidumas, atstumasIkiPrekybosCentro. Tikrinama, galbūt kažkurie nepriklausomi kintamieji -  mūsų atveju yra charakteristikos - yra koreliuoti. Koreliacijos atveju, tie patys kintamieji, turi labai panašią įtaką kainai. Tai stebime iš bendro visų kintamųjų duomenų grafiko:
+Pateikiamos charakteristikos: plotas, aukštas, garsoIzoliacija, silmosLaidumas, atstumasIkiPrekybosCentro. 
+Svarbu patikrinti nepriklausomų kintamųjų, šiuo atveju - charakteristikų, koreliaciją.  Koreliacijos atveju, tie patys kintamieji, turi labai panašią įtaką kainai. Tad pirmiausia stebime kaip atrodo turimi duomenys, ar nėra akivaizdžių koreliacijų:
+
 ```{r,echo=FALSE}
 plot(datafull)
 ```
 
-1.2. Pastebima, kad 2 rodikliai - garsoIzoliacija ir silumosLaidumas - tiesiškai susiję, todėl tikrinama galima duomenų koreliacija. 
+**1.2.** Pastebima, kad 2 rodikliai - garsoIzoliacija ir silumosLaidumas - tiesiškai susiję, todėl tikrinama galima duomenų **koreliacija**. 
 ```{r}
 cor(datafull)
 ```
@@ -75,9 +93,10 @@ datafull$garsoIzoliacija<-NULL
 ```
 
 
-**1.3. Tikrinamos išskirtys**  
+**1.3.** Tikrinamos **išskirtys**  
 Viena iš priežasčių, kodėl kuriami modeliai nėra tikslūs - duomenyse yra išskirčių. Jos iškreipia pagrindines duomenų charakteristikas, tokias kaip vidurkis, dispersija. Siekiant sukurti kuo tikslesnę regresiją, išskirtis rekomenduojama pašalinti.  
-Sukuriamas modelis modIsskirtims ir braižomas kvantilių grafikas [Q-Q plot](http://www.r-bloggers.com/exploratory-data-analysis-quantile-quantile-plots-for-new-yorks-ozone-pollution-data/), kuris parodo reikšmių pasiskirstymą:
+Sukuriamas modelis $modIsskirtims$ ir braižomas kvantilių grafikas [Q-Q plot](http://www.r-bloggers.com/exploratory-data-analysis-quantile-quantile-plots-for-new-yorks-ozone-pollution-data/), kuris parodo reikšmių pasiskirstymą:
+
 ```{r}
 modIsskirtims<-lm(kaina~+plotas+aukstas+silumosLaidumas+atstumasIkiPrekybosCentro, datafull)
 qqPlot(modIsskirtims, id.n=2)
@@ -93,41 +112,50 @@ Eilutes su duomenimis, kuriuose yra išskirtys - pašaliname. Sukuriami nauji du
 data<-datafull[-c(253,254),] 
 ```
 
+
 ####2.Modelio kūrimas  
-2.1 Sukuriamas tiesnis modelis nuo visų turimų kintamųjų
+**2.1.** Sukuriamas *tiesinis modelis* nuo visų turimų kintamųjų
 ```{r}
 mod1<-lm(kaina~+plotas+aukstas+silumosLaidumas+atstumasIkiPrekybosCentro, data)
-summary(mod1)$coefficients
+kable(summary(mod1)$coef, digits=3)
 ```
+
 Iš summary lentelėje pateiktos p-value galime teigti, kad koeficientas prie kintamojo "atstumasIkiPrekybosCentro" yra nereikšmingas (H0: b4=0 - priimame), todėl jis pašalinamas.
 
-2.2. Atnaujinamas mod2 ir tikrinamas jo kintamųjų reikšmingumas
+**2.2.** Atnaujinamas mod2 ir tikrinamas jo **kintamųjų reikšmingumas**
 ```{r}
 mod2<-update(mod1, kaina~plotas+aukstas+silumosLaidumas)
-summary(mod2)
+kable(summary(mod2)$coef, digits=3)
 ```
-Kadangi likę įverčiai reikšmingi - tikriname modelio tikslumą. Toliau tikrinamos prielaidos, kurias turi atitikti modelis. 
+
+Kadangi likę įverčiai reikšmingi - tikriname modelio tikslumą. Toliau tikrinamos prielaidos, kurias turi atitikti "geras" modelis. 
 
 ####3.Modelio patikimumo parametrai  
-3.1. "R-Squared":
+**3.1.** "R-Squared":
 ```{r}
-(summary(mod2))$r.squared #Kuo arčiau 1, tuo modelis patikimesnis. 
+(summary(mod2))$r.squared
 ```
-$R^2$ yra statistinis matas, kuris parodo, kaip duomenys yra "arti" regresinės tiesės. $R^2$ reikšmė yra intervale [0,1], tad kuo matas arčiau 1 - tuo regresinė tiesė labiau prisitaikiusi prie duomenų. 
+$R^2$ yra statistinis matas, kuris parodo, kaip duomenys yra "arti" regresinės tiesės. $R^2$ reikšmė yra intervale [0,1], tad kuo matas arčiau 1 - tuo regresinė tiesė labiau prisitaikiusi prie duomenų. Be to, šis rodiklis taip pat labai naudingas, kai siekiama palyginti keletą modelių.
 
-3.2.[Multikolinearumo tikrinimas](http://www.statisticssolutions.com/multicollinearity/)  
+**3.2.**[Multikolinearumo tikrinimas](http://www.statisticssolutions.com/multicollinearity/)  
 Statistikoje multikolinearumas yra fenomenas, kuris nurodo, kad regresijoje 2 ar daugiau kintamųjų yra koreliuoti. Šios problemos  egzistavimą tikriname naudojant Various Inflation Factor: 
 ```{r}
 vif(mod2)
 ```
-Multikolinearumo problemos nėra. Taip teigiama, nes egzistuojančią vidinę koreliaciją parodo koeficientai, kurių reikšmė yra daugiau nei 10.   
+Multikolinearumo problemos nėra. Taip teigiama, nes egzistuojančią vidinę koreliaciją parodo koeficientai, kurių reikšmė yra daugiau nei 10 (VIF sąlyga).   
 
-3.3. [Homoskedastiškumo tikrinimas](http://www.statisticssolutions.com/homoscedasticity/)   
+* Jeigu modelio kintamieji turi multikolinearumo problemą, galimos regresijos pasekmės:
+a. sulaukiame, kad kintamieji yra nereikšmingi, nors žinome, kad jų bendras poveikis tikrai nėra nulinis;
+b. koreliuotų kintamųjų įgyti koeficientai - priešingų reikšmių, t.y. jie vienas kitą kompensuoja. Todėl prarandama aiški interpretacija.
+
+
+**3.3.** [Homoskedastiškumo tikrinimas](http://www.statisticssolutions.com/homoscedasticity/)   
 Homoskedastiškumas parodo, kad regresijos atsitiktinės paklaidos yra  visur vienodos.
-Išbrėžiamos paklaidos:
+Išbrėžiamos sukurto modelio paklaidos:
+
 ```{r, echo=FALSE}
 par(mfrow=c(1,1))
-plot(mod2$res~mod2$fitted, main="Paklaidų išsibarstymas pagal reikšmes", col=2)
+plot(mod2$res~mod2$fitted, main="Paklaidų išsibarstymas pagal reikšmes", col=2, ylab="mod2 paklaidos")
 ```
 
 Kaip matome, paklaidos pasiskirsčiusios pagal vidurkį 0, daugiausia intervale (-5000,5000). Todėl spėjama, kad modelis - homoskedastiškas.  Tai dar tikrinama pagal Breuch-Pagan testą
@@ -136,9 +164,15 @@ ncvTest(mod2)
 ```
 Kadangi p>0.05, vadinasi, priimame testo H0 hipotezę, kuri teigia, kad modelis homoskedastiškas - visų stebėjimų paklaidų dispersija yra konstanta.
 
-3.4. Tikrinamas liekanų normalumas
+* Jei homoskedastiškumas nėra tenkinamas, tai formaliai didelės blogybės nėra - įverčiai ir toliau liktų nepaslinkti ir suderinti. Visgi reiktų būti atidiem ir papildomai pasvarstyti tris svarbius niuansus:
+a. Nehomogeniškumas gali indikuoti modelio neadekvatumą. Pvz. gal liko nepastebėta netiesinė sąveiką? O gal liko didelių išskirčių?
+b. Statistinio reikšmingumo tikrinimui naudojama kovariacijų matrica gali būti neteisinga.
+c. Nors įverčiai nepaslinkti, bet dabar negalime teigti, kad jie yra efektyvūs - tokiu atveju gali būti ir geresnių vertinimo būdų.
+
+**3.4.** Tikrinamas *liekanų normalumas*  
+
 ```{r, echo=FALSE}
-histmod2<-hist(mod2$res, probability=TRUE, main="Liekanų histograma", ylab="Tankumas") #išbrėžiama histograma
+histmod2<-hist(mod2$res, probability=TRUE, main="mod2 liekanų histograma", ylab="Tankumas", xlab="Liekanos")
 lines(density(mod2$res), col=4, lwd=2) #liekanų tankio grafikas
 ```
 
@@ -146,20 +180,54 @@ Mėlyna linija šioje histogramoje parodo liekanų tankumą. Ji primena varpo fo
 ```{r}
 shapiro.test(mod2$res) 
 ```
-Pagal shapiro.test p-value>0.05 priimame H0: liekanų paklaidos yra normalios
+Pagal shapiro.test p-value>0.05 priimame H0: liekanų paklaidos yra normalios.
 
-3.5.Tikinama [liekanų autokoreliacija](https://onlinecourses.science.psu.edu/stat501/node/359)  
-Geram modeliui taip pat svarbu, kad liekanos nebūtų susiję tarpusavyje. Tai tikrina Durbin-Watson testas
+* Liekanų normalumą  svarbu patikrinti tam, kad nustatytume, ar iš duomenų ištraukta visa naudinga informacija ir panaudota modelyje. Pavyzdžiui, ar atrasta duomenų tendencija įvertinta modelyje. Jeigu atsakymas teigiamas, paklaidos yra baltasis triukšmas (išsidėsčiusios nepriklausomai ir jų vidurkis yra 0):
+```{r}
+plot(residuals(mod2), type="l", main="Modelio mod2  paklaidos", ylab="mod2 paklaidos", xlab="Stebėjimas")
+```
+
+Jeigu sąlyga netenkinama - modelis dar nėra pakankamai "geras", tad verta pasvarstyti jo tobulinimą. 
+
+**3.5.** Tikinama [liekanų autokoreliacija](https://onlinecourses.science.psu.edu/stat501/node/359)    
+Geram modeliui taip pat svarbu, kad liekanos nebūtų susiję tarpusavyje. Tai tikrina Durbin-Watson testas:
 ```{r}
 durbinWatsonTest(mod2)
 ```
-Kadangi testo p-value>0.05, H0: nėra koreliacijos tarp liekanų priimame.  
+Kadangi testo p-value>0.05, H0: nėra koreliacijos tarp liekanų, priimame.  
+
+* Jeigu testo nulinė hipotezė atmetama - įverčiai vis dar yra nepaslinkti ir suderinti, tačiau tampa nebeefektyvūs. Taip yra todėl, kad įverčių variacija - paslinkta ir nesuderinta. ??
+Pagrindinė liekanų autokoreliacijos problema - netikslumai prognozuojant. 
 
 Vadinasi, kadangi modelis atitinka šiuos kriterijus, galime teigti, kad teisingas modelis $kaina~+plotas+aukstas+silumosLaidumas$. 
 Atitinkamai įverčiai parodo kaip pakitus vienam vienetui iš šių charakteristikų, pakinta kaina: 
 $kaina=8035.8 + 600.33*plotas+3.18.23*aukstas+528.82*silumosLaidumas+e$  
 Interpretacija: 1 kv.m padidėjimas padidina kainą 600,33eurais, kiekvienas papildomas aukštas kainą padidina 318,23 eurais, 1 vnt. šilumos laidumo koeficiento padidėjimas padidina kainą 528,82 eurais. Laisvasis narys - 8035,80 eurai gali būti papildomas išlaidos pvz.:notaro paslaugos, buto lokacija, viešojo transporto prieinamumas ir pan. 
 
-* Naudoti informacijos šaltiniai:
-[wikipedia.org](https://en.wikipedia.org/wiki/Linear_regression#Simple_and_multiple_regression)
-[wordpress.com blogas](https://gpaukstaite.wordpress.com/2011/10/15/tiesine-regresija/)
+
+###Trumpai apie modelio "gerinimą"
+Sudarytas modelis mod2 - geras, ir tinka pradedantiems mokytis regresinės analizės. Tačiau,  duomenys neretai gali būti ranginiai, kas pastebima ir atidžiau išanalizavus mūsų turimus duomenis. Galime pastebėti, kad kintamasis $aukstas$ - yra ranginis kintamasis. Tai galime matyti iš liekanų boxplot grafiko:
+```{r}
+boxplot(mod2$residuals ~ data$aukstas, col = "lightgray", main="mod2 liekanų boxplot pagal aukštą", ylab="Liekanos", xlab="Aukštas")
+```
+
+Iš grafiko matome, kad  pirmo aukšto kaina neatitinka regresinės tiesės lygties, t.y.  paklaidos neigiamos, jų vidurkis nėra lygus 0. Tai reiškia, kad pirmo aukšto kainos yra gerokai mažesnės ir neatitinka sukurto modelio. Siekiant į tai atsižvelgti, galima kurti modelį, kuriame išskiriamas pirmas aukštas:
+```{r}
+aukstas1<-data$aukstas==1
+mod3<-lm(kaina~plotas +aukstas1+silumosLaidumas,data=data)
+kable(summary(mod4)$coef,digits=2)
+```
+Gautame modelyje "aukstas1TRUE" yra kintamasis, kuris galioja tik tuo atveju, jei pasitinkto buvo aukštas yra pirmas. Kitu atveju - jis modelyje įgyja reikšmę 0. Matoma, kad visi kintamieji reikšmingi. Tikrinama ar šis mod3 yra tikslesnis pagal R^2 ir AIC kriterijus:
+```{r}
+aic<-c(AIC(mod2), AIC(mod3))
+r.sq<-c((summary(mod2))$r.squared, (summary(mod3))$r.squared)
+pav<-c("mod2", "mod3")
+tab<-data.frame(pav,aic,r.sq)
+tab
+```
+Tiek AIC, tiek R^2 koeficientas yra mažesnis mod3. Tad tikėtina, kad  jis yra tikslesnis už mod2.
+
+Tokiu atveju, gauta lygtis yra $kaina=10235.63+598.84plotas-5440.16*1aukštas+silumosLaidumas$. 
+
+* Naudoti informacijos šaltiniai:  
+R. Lapinskas. [Practical Econometrics I. Regression Models (Lecture Notes)](http://www.statistika.mif.vu.lt/wp-content/uploads/2014/05/PE.I-2013-CompLabs.2013.12.17_t.pdf), 2013, Vilnius, 112 p.
