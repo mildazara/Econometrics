@@ -84,7 +84,7 @@ plot(datafull)
 
 **1.2.** Pastebima, kad 2 rodikliai - garsoIzoliacija ir silumosLaidumas - tiesiškai susiję, todėl tikrinama galima duomenų **koreliacija**. 
 ```{r}
-cor(datafull)
+print(cor(datafull), digits = 3)
 ```
 Kadangi koreliacijos koeficientas tarp aptartų rodiklių labai didelis (arti 1) - rodikliai labai susiję, t.y. abu apibūdina buto izoliaciją. Tai reikškia, kad koeficientų įverčiai tikriausiai bus paslinkti. Siekiant panaikinti šią problemą reikia arba panaikinti vieną iš kintamųjų arba juos kažkaip sujungti.  
 Sujungti (vienas iš būdų - skaičiuoti vidurkį) nepasirenkama, nes nenustatyta ar abiejų koeficienų duomenis apibūdina tie patys matavimo vienetai.
