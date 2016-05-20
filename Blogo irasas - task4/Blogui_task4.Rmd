@@ -202,7 +202,7 @@ Pagrindinė liekanų autokoreliacijos problema - netikslumai prognozuojant.
 
 Vadinasi, kadangi modelis atitinka šiuos kriterijus, galime teigti, kad teisingas modelis $kaina~+plotas+aukstas+silumosLaidumas$. 
 Atitinkamai įverčiai parodo kaip pakitus vienam vienetui iš šių charakteristikų, pakinta kaina: 
-$kaina=8035.8 + 600.33*plotas+3.18.23*aukstas+528.82*silumosLaidumas+e$  
+**$kaina=8035.8 + 600.33*plotas+3.18.23*aukstas+528.82*silumosLaidumas+e$**
 Interpretacija: 1 kv.m padidėjimas padidina kainą 600,33eurais, kiekvienas papildomas aukštas kainą padidina 318,23 eurais, 1 vnt. šilumos laidumo koeficiento padidėjimas padidina kainą 528,82 eurais. Laisvasis narys - 8035,80 eurai gali būti papildomas išlaidos pvz.:notaro paslaugos, buto lokacija, viešojo transporto prieinamumas ir pan. 
 
 
@@ -227,7 +227,7 @@ pav<-c("mod2", "mod3")
 tab<-data.frame(pav,aic,r.sq)
 tab
 ```
-Tiek AIC, tiek R^2 koeficientas yra mažesnis mod3. Tad tikėtina, kad  jis yra tikslesnis už mod2.
+mod3 AIC mažesnis, R^2 koeficientas - didesnis, lyginant su modč. Tad tikėtina, kad modelis *mod3* yra tikslesnis už *mod2*.
 
 Tokiu atveju, gauta lygtis yra $kaina=10235.63+598.84plotas-5440.16*1aukštas+silumosLaidumas$. 
 
