@@ -4,6 +4,7 @@ author: "Milda Zarankaite"
 date: "Sunday, March 13, 2016"
 output: html_document
 ---
+
 #Tiesinė regresija
 
 Statistikos ir ekonomikos tyrimuose neretai siekiama ištirti reiškinių priklausomybę, pavyzdžiui:   
@@ -30,7 +31,7 @@ Regresijos tikslas yra surasti lygtį $\hat{Y}=\hat{\alpha}+\hat{\beta}X+\hat{\e
 **Tiesinė daugialypė regresija** tiriama, kai vieną priklausomąjį kintamąjį $Y=(y_1, y_2,.., y_k)^T$ sieja tiesinė priklausomybė su $n$ nepriklausomų kintamųjų $X=(X_1,X_2,..,X_n)^T$. Tuomet tiesinė daugialypė regresija išreiškiama:  
 
 
-$$Y={\alpha}+{\beta}_1X_1+{\beta}_2X_2+...+{\beta}_nX_n+e={\alpha}+{\beta}X+{\epsilon}$$ ,      
+$$Y={\alpha}+{\beta}_1X_1+{\beta}_2X_2+...+{\beta}_nX_n+e={\alpha}+\vec{\beta}X+{\epsilon}$$ ,      
 
 
 čia $X$ nepriklausomų kintamųjų matrica, kurią  sudaro:   
@@ -46,8 +47,8 @@ Tikslas - **regresijos tiesės lygtis**, t.y.  rasti tokius ${\alpha}$ ir ${\bet
 
 $$\hat{Y}=\hat{\alpha}+\hat{\beta}_1X_1+\hat{\beta}_2X_2+...+\hat{\beta}_kX_n+\hat{\epsilon}$$ ,  
 
-paklaidos $\vec{e}=(e_1,e_2,...,e_k)$  būtų mažiausios.
-$\vec{\epsilon}=Y-\hat{Y}=Y-(\hat{\alpha}+\hat{\beta}X)$ ,   
+paklaidos $\hat{\epsilon}=(e_1,e_2,...,e_k)$  būtų mažiausios.
+$\hat{\epsilon}=Y-\hat{Y}=Y-(\hat{\alpha}+\hat{\beta}X)$ ,   
 vadinamas atsitiktine liekamąja paklaida, kiekvienam $i=1,2,…,k$.  
 
 Įvertinimas daromas naudojantis [mažiausių kvadratų metodu](https://en.wikipedia.org/wiki/Least_squares).
@@ -210,13 +211,14 @@ Sudarytas modelis mod2 - geras, ir tinka pradedantiems mokytis regresinės anali
 ```{r}
 boxplot(mod2$residuals ~ data$aukstas, col = "lightgray", main="mod2 liekanų boxplot pagal aukštą", ylab="Liekanos", xlab="Aukštas")
 ```
-
+  
 Iš grafiko matome, kad  pirmo aukšto kaina neatitinka regresinės tiesės lygties, t.y.  paklaidos neigiamos, jų vidurkis nėra lygus 0. Tai reiškia, kad pirmo aukšto kainos yra gerokai mažesnės ir neatitinka sukurto modelio. Siekiant į tai atsižvelgti, galima kurti modelį, kuriame išskiriamas pirmas aukštas:
 ```{r}
 aukstas1<-data$aukstas==1
 mod3<-lm(kaina~plotas +aukstas1+silumosLaidumas,data=data)
-kable(summary(mod4)$coef,digits=2)
+kable(summary(mod3)$coef,digits=2)
 ```
+
 Gautame modelyje "aukstas1TRUE" yra kintamasis, kuris galioja tik tuo atveju, jei pasitinkto buvo aukštas yra pirmas. Kitu atveju - jis modelyje įgyja reikšmę 0. Matoma, kad visi kintamieji reikšmingi. Tikrinama ar šis mod3 yra tikslesnis pagal R^2 ir AIC kriterijus:
 ```{r}
 aic<-c(AIC(mod2), AIC(mod3))
@@ -230,4 +232,4 @@ Tiek AIC, tiek R^2 koeficientas yra mažesnis mod3. Tad tikėtina, kad  jis yra 
 Tokiu atveju, gauta lygtis yra $kaina=10235.63+598.84plotas-5440.16*1aukštas+silumosLaidumas$. 
 
 * Naudoti informacijos šaltiniai:  
-R. Lapinskas. [Practical Econometrics I. Regression Models (Lecture Notes)](http://www.statistika.mif.vu.lt/wp-content/uploads/2014/05/PE.I-2013-CompLabs.2013.12.17_t.pdf), 2013, Vilnius, 112 p.
+R. Lapinskas. [Practical Econometrics I. Regression Models (Lecture Notes)](http://www.statistika.mif.vu.lt/wp-content/uploads/2014/05/PE.I-2013-CompLabs.2013.12.17_t.pdf), 2013, Vilnius.
