@@ -14,24 +14,24 @@ Statistikos ir ekonomikos tyrimuose neretai siekiama ištirti reiškinių prikla
   
     
 Šias priklausomybes galima nustatyti regresinės analizės pagalba. Sudaromas regresinis modelis - statistinis modelis, padedantis nustatyti vieno kintamojo priklausomybę nuo kito. 
-Regresija yra tiesinė, kai vienas kintamasis nuo kito priklauso tiesiškai. Tarkime, kad mūsų duomenis sudaro $n$ porų : ${(x_i,y_i), i=1,..,k}$.
+Tarkime, kad mūsų duomenis sudaro $k$ porų : ${(x_i,y_i), i=1,..,k}$.
 Bendriausias regresijos modelis, siejantis kiekvieną $x$ ir $y$:
 
 
-$$Y={\alpha}+{\beta}X+{\epsilon},$$     
+$$Y={\alpha}+{\beta}X+{\epsilon_i} ,$$     
 
 
-kur $Y=(y_1, y_2,.., y_k)^T$ - priklausomo kintamasojo reikšmių vektorius, $^T$ -transponuota,   
+čia $Y=(y_1, y_2,.., y_k)^T$ - priklausomo kintamasojo reikšmių vektorius, $^T$ -transponuota,   
 $X=(x_1,x_2,...,x_k)^T$ - nepriklausomo kintamamojo reikšmių vektorius,  
 ${\alpha}$ ir ${\beta}$ - konstantos.   
-${\epsilon}=(e_1,e_2,..,e_k)$ - atsitiktinių paklaidų vektorius.  
+${\epsilon_i}, i=1,...,k$ - atsitiktinė paklaida.  
 
-Regresijos tikslas yra surasti lygtį $\hat{Y}=\hat{\alpha}+\hat{\beta}X+\hat{\epsilon}$, kuri "geriausiai" atitiktų turimus duomenis. Tiksliausia lygtis randama Mažiausių kvadratų metodu: išbrėžiama tiesė, kuri minimizuoja paklaidų kvadratų sumą nuo tiesinio regresinio modelio. ${\alpha}$ tampa konstanta, o ${\beta}$  - krypties koeficientu. 
+Regresijos tikslas yra surasti lygtį $\hat{Y}=\hat{\alpha}+\hat{\beta}X$, kuri "geriausiai" atitiktų turimus duomenis. Vienas iš būdų tai padarytiyra naudojantis Mažiausių kvadratų metodu: išbrėžiama tiesė, kuri minimizuoja paklaidų kvadratų sumą nuo tiesinio regresinio modelio. ${\alpha}$ yra konstanta, o ${\beta}$  - krypties koeficientu. 
 
-**Tiesinė daugialypė regresija** tiriama, kai vieną priklausomąjį kintamąjį $Y=(y_1, y_2,.., y_k)^T$ sieja tiesinė priklausomybė su $n$ nepriklausomų kintamųjų $X=(X_1,X_2,..,X_n)^T$. Tuomet tiesinė daugialypė regresija išreiškiama:  
+**Tiesinė daugialypė regresija** tiriama, kai vieną priklausomąjį kintamąjį $Y=(y_1, y_2,.., y_n)^T$ sieja tiesinė priklausomybė su $k$ nepriklausomų kintamųjų $X=(X_1,X_2,..,X_k)^T$. Tuomet tiesinė daugialypė regresija išreiškiama:  
 
 
-$$Y={\alpha}+{\beta}_1X_1+{\beta}_2X_2+...+{\beta}_nX_n+e={\alpha}+\vec{\beta}X+{\epsilon}$$ ,      
+$$Y={\alpha}+{\beta}_1X_1+{\beta}_2X_2+...+{\beta}_kX_k+e={\alpha}+\vec{\beta}X+{\epsilon_i} ,$$       
 
 
 čia $X$ nepriklausomų kintamųjų matrica, kurią  sudaro:   
@@ -40,22 +40,20 @@ $\vec{X_2}=(x_{21},x_{22},...,x_{2n})$,
 ... ,   
 $\vec{X_k}=(x_{k1},x_{k2},...,x_{kn})$;  
 ${\alpha}$, $\vec{\beta}=({\beta}_1,{\beta}_2,...,{\beta}_k)^T$ yra nežinomos konstantos,    
-${\epsilon}$ - atsitiktinė paklaida. 
+${\epsilon_i}, i=1,...,n$ - atsitiktinė paklaida. 
  
 Tikslas - **regresijos tiesės lygtis**, t.y.  rasti tokius ${\alpha}$ ir ${\beta}$ įverčius $\hat{\alpha}$, $\hat{\beta}$, kad    
 
 
-$$\hat{Y}=\hat{\alpha}+\hat{\beta}_1X_1+\hat{\beta}_2X_2+...+\hat{\beta}_kX_n+\hat{\epsilon}$$ ,  
+$$\hat{Y}=\hat{\alpha}+\hat{\beta}_1X_1+\hat{\beta}_2X_2+...+\hat{\beta}_kX_k ,$$   
 
-paklaidos $\hat{\epsilon}=(e_1,e_2,...,e_k)$  būtų mažiausios.
-$\hat{\epsilon}=Y-\hat{Y}=Y-(\hat{\alpha}+\hat{\beta}X)$ ,   
-vadinamas atsitiktine liekamąja paklaida, kiekvienam $i=1,2,…,k$.  
+kad liekamosioji paklaida ${\epsilon_i}$  visur būtų mažiausia:
+${\epsilon_i}=Y-\hat{Y}=Y-(\hat{\alpha}+\hat{\beta}X)$ , kiekvienam $i=1,2,…,n$.  
 
-Įvertinimas daromas naudojantis [mažiausių kvadratų metodu](https://en.wikipedia.org/wiki/Least_squares).
+Čia taip pat įvertinimas daromas naudojantis [mažiausių kvadratų metodu](https://en.wikipedia.org/wiki/Least_squares).
 
 Viena pagrindinė tiesinių regresinių modelių nauda - priklausomojo kintamojo prognozė. T.y. atradę tiesinę priklausomybę, galime nustatyti, kaip keisis $Y$ reikšmė, pakeitus nepriklausomąjį kintamąjį $X$. 
 
-  
 
 Šiame įraše pateikiamas pavyzdys kaip atliekama išsami tiesinė regresija naudojantis statistine programa R.
 
@@ -72,8 +70,10 @@ library(knitr)
 ```
 ```{r, echo=FALSE}
 setwd("~/Econometrics/Blogo irasas - task4")
+```
+```{r}
 datafull<-read.csv2("data.csv") 
-head(datafull)
+head(datafull) #atspausdinami duomenys
 ```
 Pateikiamos charakteristikos: plotas, aukštas, garsoIzoliacija, silmosLaidumas, atstumasIkiPrekybosCentro. 
 Svarbu patikrinti nepriklausomų kintamųjų, šiuo atveju - charakteristikų, koreliaciją.  Koreliacijos atveju, tie patys kintamieji, turi labai panašią įtaką kainai. Tad pirmiausia stebime kaip atrodo turimi duomenys, ar nėra akivaizdžių koreliacijų:
@@ -103,7 +103,7 @@ modIsskirtims<-lm(kaina~+plotas+aukstas+silumosLaidumas+atstumasIkiPrekybosCentr
 qqPlot(modIsskirtims, id.n=2)
 ```
 
-Pastebima, kad duomenyse yra išskirčių, tad duomenys tikrinami pagal "outlierTest" diganostiką:
+Pastebima, kad duomenyse yra išskirčių, tad duomenys tikrinami pagal `outlierTest` diganostiką:
 ```{r}
 outlierTest(modIsskirtims)
 ```
@@ -154,12 +154,13 @@ b. koreliuotų kintamųjų įgyti koeficientai - priešingų reikšmių, t.y. ji
 Homoskedastiškumas parodo, kad regresijos atsitiktinės paklaidos yra  visur vienodos.
 Išbrėžiamos sukurto modelio paklaidos:
 
-```{r, echo=FALSE}
+```{r}
 par(mfrow=c(1,1))
-plot(mod2$res~mod2$fitted, main="Paklaidų išsibarstymas pagal reikšmes", col=2, ylab="mod2 paklaidos")
+plot(mod2$res~mod2$fitted, main="Paklaidų išsibarstymas pagal reikšmes", col=2, ylab="mod2 paklaidos", xlab="Butų kainos")
+abline(0,0)
 ```
 
-Kaip matome, paklaidos pasiskirsčiusios pagal vidurkį 0, daugiausia intervale (-5000,5000). Todėl spėjama, kad modelis - homoskedastiškas.  Tai dar tikrinama pagal Breuch-Pagan testą
+Kaip matome, paklaidos pasiskirsčiusios pagal vidurkį 0, daugiausia intervale (-5000,5000). Todėl spėjama, kad modelis - homoskedastiškas.  Tai dar tikrinama pagal Breuch-Pagan testą (`ncvTest`)
 ```{r}
 ncvTest(mod2)
 ```
@@ -173,7 +174,7 @@ c. Nors įverčiai nepaslinkti, bet dabar negalime teigti, kad jie yra efektyvū
 **3.4.** Tikrinamas *liekanų normalumas*  
 
 ```{r, echo=FALSE}
-histmod2<-hist(mod2$res, probability=TRUE, main="mod2 liekanų histograma", ylab="Tankumas", xlab="Liekanos")
+histmod2<-hist(mod2$res, probability=TRUE, main="mod2 liekanų histograma", ylab="Tankumas", xlab="Liekanos", ylim=c(0,0.0002))
 lines(density(mod2$res), col=4, lwd=2) #liekanų tankio grafikas
 ```
 
@@ -181,11 +182,12 @@ Mėlyna linija šioje histogramoje parodo liekanų tankumą. Ji primena varpo fo
 ```{r}
 shapiro.test(mod2$res) 
 ```
-Pagal shapiro.test p-value>0.05 priimame H0: liekanų paklaidos yra normalios.
+Pagal `shapiro.test` p-value>0.05 priimame H0: liekanų paklaidos yra normalios.
 
 * Liekanų normalumą  svarbu patikrinti tam, kad nustatytume, ar iš duomenų ištraukta visa naudinga informacija ir panaudota modelyje. Pavyzdžiui, ar atrasta duomenų tendencija įvertinta modelyje. Jeigu atsakymas teigiamas, paklaidos yra baltasis triukšmas (išsidėsčiusios nepriklausomai ir jų vidurkis yra 0):
 ```{r}
-plot(residuals(mod2), type="l", main="Modelio mod2  paklaidos", ylab="mod2 paklaidos", xlab="Stebėjimas")
+plot(residuals(mod2), type="l", main="Modelio mod2  paklaidos", ylab="mod2 paklaidos", xlab="Stebėjimas", col=100)
+abline(0,0)
 ```
 
 Jeigu sąlyga netenkinama - modelis dar nėra pakankamai "geras", tad verta pasvarstyti jo tobulinimą. 
@@ -207,9 +209,10 @@ Interpretacija: 1 kv.m padidėjimas padidina kainą 600,33eurais, kiekvienas pap
 
 
 ###Trumpai apie modelio "gerinimą"
-Sudarytas modelis mod2 - geras, ir tinka pradedantiems mokytis regresinės analizės. Tačiau,  duomenys neretai gali būti ranginiai, kas pastebima ir atidžiau išanalizavus mūsų turimus duomenis. Galime pastebėti, kad kintamasis $aukstas$ - yra ranginis kintamasis. Tai galime matyti iš liekanų boxplot grafiko:
+Sudarytas modelis mod2 - geras, ir tinka pradedantiems mokytis regresinės analizės. Tačiau,  duomenys neretai gali būti ranginiai, kas pastebima ir atidžiau išanalizavus mūsų turimus duomenis. Galime pastebėti, kad kintamasis $aukstas$ - yra ranginis kintamasis. Tai galime matyti iš liekanų `boxplot` grafiko:
 ```{r}
 boxplot(mod2$residuals ~ data$aukstas, col = "lightgray", main="mod2 liekanų boxplot pagal aukštą", ylab="Liekanos", xlab="Aukštas")
+abline(0,0)
 ```
   
 Iš grafiko matome, kad  pirmo aukšto kaina neatitinka regresinės tiesės lygties, t.y.  paklaidos neigiamos, jų vidurkis nėra lygus 0. Tai reiškia, kad pirmo aukšto kainos yra gerokai mažesnės ir neatitinka sukurto modelio. Siekiant į tai atsižvelgti, galima kurti modelį, kuriame išskiriamas pirmas aukštas:
@@ -219,7 +222,7 @@ mod3<-lm(kaina~plotas +aukstas1+silumosLaidumas,data=data)
 kable(summary(mod3)$coef,digits=2)
 ```
 
-Gautame modelyje "aukstas1TRUE" yra kintamasis, kuris galioja tik tuo atveju, jei pasitinkto buvo aukštas yra pirmas. Kitu atveju - jis modelyje įgyja reikšmę 0. Matoma, kad visi kintamieji reikšmingi. Tikrinama ar šis mod3 yra tikslesnis pagal R^2 ir AIC kriterijus:
+Gautame modelyje `aukstas1TRUE` yra kintamasis, kuris galioja tik tuo atveju, jei pasitinkto buvo aukštas yra pirmas. Kitu atveju - jis modelyje įgyja reikšmę 0. Matoma, kad visi kintamieji reikšmingi. Tikrinama ar šis mod3 yra tikslesnis pagal R^2 ir AIC kriterijus:
 ```{r}
 aic<-c(AIC(mod2), AIC(mod3))
 r.sq<-c((summary(mod2))$r.squared, (summary(mod3))$r.squared)
