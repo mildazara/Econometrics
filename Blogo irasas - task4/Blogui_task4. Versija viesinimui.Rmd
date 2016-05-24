@@ -1,8 +1,10 @@
 ---
 title: "Tiesinė regresija"
-author: "Milda Zarankaite"
+author: "Milda Zarankaitė"
 date: "Sunday, March 13, 2016"
-output: html_document
+output:  
+  md_document:
+    variant: markdown_phpextra
 ---
 
 #Tiesinė regresija
@@ -18,7 +20,7 @@ Tarkime, kad mūsų duomenis sudaro $k$ porų : ${(x_i,y_i), i=1,..,k}$.
 Bendriausias regresijos modelis, siejantis kiekvieną $x$ ir $y$:
 
 
-$$Y={\alpha}+{\beta}X+{\epsilon_i} ,$$     
+$$Y=\alpha+\beta X+\epsilon_i ,$$     
 
 
 čia $Y=(y_1, y_2,.., y_k)^T$ - priklausomo kintamasojo reikšmių vektorius, $^T$ -transponuota,   
@@ -115,7 +117,7 @@ data<-datafull[-c(253,254),]
 
 
 ####2.Modelio kūrimas  
-**2.1.** Sukuriamas *tiesinis modelis* nuo visų turimų kintamųjų
+**2.1.** Sukuriamas *tiesinis modelis*, kuriame panaudojami visi turimi kintamieji
 ```{r}
 mod1<-lm(kaina~+plotas+aukstas+silumosLaidumas+atstumasIkiPrekybosCentro, data)
 kable(summary(mod1)$coef, digits=3)
@@ -139,7 +141,7 @@ Kadangi likę įverčiai reikšmingi - tikriname modelio tikslumą. Toliau tikri
 $R^2$ yra statistinis matas, kuris parodo, kaip duomenys yra "arti" regresinės tiesės. $R^2$ reikšmė yra intervale [0,1], tad kuo matas arčiau 1 - tuo regresinė tiesė labiau prisitaikiusi prie duomenų. Be to, šis rodiklis taip pat labai naudingas, kai siekiama palyginti keletą modelių.
 
 **3.2.**[Multikolinearumo tikrinimas](http://www.statisticssolutions.com/multicollinearity/)  
-Statistikoje multikolinearumas yra fenomenas, kuris nurodo, kad regresijoje 2 ar daugiau kintamųjų yra koreliuoti. Šios problemos  egzistavimą tikriname naudojant Various Inflation Factor: 
+Statistikoje multikolinearumas yra fenomenas, kuris nurodo, kad regresijoje 2 ar daugiau kintamųjų yra koreliuoti. Šios problemos  egzistavimą tikriname naudojant Variance Inflation Factor: 
 ```{r}
 vif(mod2)
 ```
@@ -204,7 +206,7 @@ Pagrindinė liekanų autokoreliacijos problema - netikslumai prognozuojant.
 
 Vadinasi, kadangi modelis atitinka šiuos kriterijus, galime teigti, kad teisingas modelis $kaina~+plotas+aukstas+silumosLaidumas$. 
 Atitinkamai įverčiai parodo kaip pakitus vienam vienetui iš šių charakteristikų, pakinta kaina: 
-**$kaina=8035.8 + 600.33*plotas+3.18.23*aukstas+528.82*silumosLaidumas+e$**
+$kaina=8035.8 + 600.33*plotas+3.18.23*aukstas+528.82*silumosLaidumas+e$
 Interpretacija: 1 kv.m padidėjimas padidina kainą 600,33eurais, kiekvienas papildomas aukštas kainą padidina 318,23 eurais, 1 vnt. šilumos laidumo koeficiento padidėjimas padidina kainą 528,82 eurais. Laisvasis narys - 8035,80 eurai gali būti papildomas išlaidos pvz.:notaro paslaugos, buto lokacija, viešojo transporto prieinamumas ir pan. 
 
 
