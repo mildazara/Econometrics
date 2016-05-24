@@ -178,7 +178,7 @@ histmod2<-hist(mod2$res, probability=TRUE, main="mod2 liekanų histograma", ylab
 lines(density(mod2$res), col=4, lwd=2) #liekanų tankio grafikas
 ```
 
-Mėlyna linija šioje histogramoje parodo liekanų tankumą. Ji primena varpo formą, tad spėjama, kad liekanos pasiskirsčiusios normaliai. Prielaida dar tikrinama Shapiro testu:
+Mėlyna linija šioje histogramoje parodo liekanų tankio pasiskirstymą. Ji primena varpo formą, tad spėjama, kad liekanos pasiskirsčiusios normaliai. Prielaida dar tikrinama Shapiro testu:
 ```{r}
 shapiro.test(mod2$res) 
 ```
@@ -199,7 +199,7 @@ durbinWatsonTest(mod2)
 ```
 Kadangi testo p-value>0.05, H0: nėra koreliacijos tarp liekanų, priimame.  
 
-* Jeigu testo nulinė hipotezė atmetama - įverčiai vis dar yra nepaslinkti ir suderinti, tačiau tampa nebeefektyvūs. Taip yra todėl, kad įverčių variacija - paslinkta ir nesuderinta. ??
+* Jeigu testo nulinė hipotezė atmetama - įverčiai vis dar yra nepaslinkti ir suderinti, tačiau tampa nebeefektyvūs. 
 Pagrindinė liekanų autokoreliacijos problema - netikslumai prognozuojant. 
 
 Vadinasi, kadangi modelis atitinka šiuos kriterijus, galime teigti, kad teisingas modelis $kaina~+plotas+aukstas+silumosLaidumas$. 
