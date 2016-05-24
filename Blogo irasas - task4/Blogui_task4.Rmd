@@ -21,7 +21,7 @@ Bendriausias regresijos modelis, siejantis kiekvieną $x$ ir $y$:
 $$Y={\alpha}+{\beta}X+{\epsilon_i} ,$$     
 
 
-čia $Y=(y_1, y_2,.., y_k)^T$ - priklausomo kintamasojo reikšmių vektorius, $^T$ -transponuota,   
+čia $Y=(y_1, y_2,.., y_k)^T$ - priklausomo kintamojo reikšmių vektorius, $^T$ -transponuota,   
 $X=(x_1,x_2,...,x_k)^T$ - nepriklausomo kintamamojo reikšmių vektorius,  
 ${\alpha}$ ir ${\beta}$ - konstantos.   
 ${\epsilon_i}, i=1,...,k$ - atsitiktinė paklaida.  
