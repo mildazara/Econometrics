@@ -1,0 +1,510 @@
+---
+title: "Egzaminas"
+author: "Milda Zarankaite"
+date: '2016 m birželis 14 d '
+output: html_document
+---
+
+#Praktinės Ekonometrijos II egzaminas
+
+Instaliuojamos reikalingos bibliotekos
+```{r, message=FALSE}
+library(car)
+library(fpp)
+library(dynlm)
+library(knitr) #kable
+library(dplyr) #trainSet 2 uŽduočiai
+```
+
+Užduotys ir sprendimai
+===================================================================
+
+*Užkomentuotas ir nepanaudotas kodas - buvo template, bet arba nemokėjau padaryt arba nespėjau. 
+
+
+###Užduotis nr.1
+
+Atlikta tik empyriškai.
+
+Sukuriame X funkciją
+```{r}
+X<-function(){
+  x_1<-rnorm(1, mean=3, sd=2)
+  x_2<-rnorm(1, mean=-1, sd=2)
+  return(x_1+x_2)
+}
+
+
+```
+
+a) Rasti $X$ teorinį skirstinį
+```{r}
+#! prob - galutinės tikimybes
+
+```
+
+
+b) Sugeneruokite $X$ imtį ($N=10000$) pagal pateiktą $X$ apibrėžimą.
+```{r}
+eksper_b<-replicate(10000, X())
+```
+
+c)  Palyginkite sugeneruotą $X$ empirinį skirstinį su teorinį skirstiniu.  
+Palyginimui pateikite tankių grafikus ir skirstinių charakteristikas (vidurkį, medianą ir standartinį nuokrypį)
+```{r}
+#Tankių grafikai
+hist(eksper_b, probability = T)
+lines(density(eksper_b) , col="red")
+
+#Charakteristikos
+mean(eksper_b)
+median(eksper_b)
+sd(eksper_b)
+
+#Lentelė
+#pa<-c("Teorinis", "Empyrinis")
+#vid<-c(mean(prob), mean(tik_emp))
+#med<-c(median(prob), mean(tik_emp))
+#sd<-c(sd(prob), sd(tik_emp))
+#table1<-data.frame(pa,vid,med,sd)
+#colnames(table1)<-c("Skirstinys","Vidurkis","Mediana","Standartinis nuokrypis")
+#table1
+```
+IŠVADOS:  
+1) Pagal tankio grafiką matome, kad  skirstinys- normalusis, nes tankis yra varpo formos.
+2) Vidurkis, mediana is standartinis nuokrypis empyrinio skirstinio pateikti iš kodo.
+
+d)
+```{r}
+ivykis<-function(){
+  X()^2
+  X()
+  if((X())^2-X()-2){
+    return(1)
+  }
+  else {
+    return(0)
+  }
+}
+
+#Monte Carlo:
+eksp_d<-replicate(1000, ivykis())
+mean(eksp_d)
+#Teoriškai:
+
+```
+Monte Carlo metodu, įvykio tikimybė arti 1.
+
+```{r}
+ivykis_2<-function(){
+  X()>0
+  if((X())^2-X()-2){
+    return(1)
+  }
+  else {
+    return(0)
+  }
+}
+
+#Monte Carlo:
+eksp_e<-replicate(1000, ivykis_2())
+mean(eksp_e)
+
+```
+Monte Carlo metodu, įvykio tikimybė vėl arti 1.
+
+###Užduotis nr2
+
+####1 Duomenų apžvalga ir paruošimas
+a) Nuskaitomas duomenų masyvas:
+```{r}
+datafull<-read.csv2("data_b2.csv", header = TRUE)
+head(datafull)
+```
+Įkelti duomenys yra be paskutinių eilučių, kur yra duomenų paaiškinimai (ištryniau iš pačio dokumento)
+
+b) Tvarkomi duomenys:
+```{r}
+#Šalinamos eilutės, kuriose yra trūkstamos values
+datafull[datafull=="NAN"]<-NA 
+data2<-na.omit(datafull) #pašalintos 5 eilutės
+
+#Nustatinėjamos klasės
+str(data2)
+#Pakeičiamos klasės
+a<-as.numeric(as.character(data2[,1]))
+b<-as.numeric(as.character(data2[,2])) 
+c<-as.numeric(as.character(data2[,3]))
+d<-as.numeric(as.character(data2[,4]))
+e<-as.numeric(as.character(data2[,5]))
+data3<-data.frame(a,b,c,d,e)
+colnames(data3)<-c("islaidosVaisiams","butinosIslaidos","pajamos","rajonoId","atstumas")
+str(data3)
+```
+
+* Tikrinamos išskirtys:
+```{r}
+mod_isskirtims<-lm(islaidosVaisiams~butinosIslaidos+pajamos+rajonoId+atstumas , data3)
+qqPlot(mod_isskirtims)
+outlierTest(mod_isskirtims)
+```
+Rasta išskirtins 367 eilutėje, ją ištriname ir turime galutinius duomenyis, paruoštus analizei:
+```{r}
+data<-data3[-367,]
+```
+
+Duomenyse lieka 409 reikšmingų duomenų eilutės.
+
+c) Trumpa kintamųjų apžvalga:
+```{r}
+plot(data)
+summary(data)
+cor(data)
+```
+`plot`funkcija sufleruoja, kad rajono iD - žyminis kintamasis, o tarp kintamųjjų  "islaidosVaisiams" ir butinosIslaidos galima tiesinė koreliacija.
+`summary`parodo, kad lyginant kintamųjų  vidurkį ir jų  Min. Max. Atrodo, kad  pajamos gali turėti išskirčių, nes Max gerokai nutolęs nuo medianos ir vidurkio (Mean=20.8, o Max=113,86)
+`cor` parodo,  kad kintamieji  tiesiškai koreliuoti. ielaidosVaisiams ir butinosIslaidos, koreliacija yr 0,72, kas patvirtina `plot` funkcijos sufleruojam1 prielaidą apie tiesinę priklausomybę. Čia problemos nėra, nes koreliacija tarp priklausomojo ir nepriklausomojo kintamųjų.
+
+d) Duomenų masyvo skaldymas į `trainSet` ir `testSet`. Atskyrimas naudojamas iš [čia](http://stackoverflow.com/questions/17200114/how-to-split-data-into-training-testing-sets-using-sample-function-in-r-program)
+
+```{r}
+trainSet<-sample_frac(data, 0.8)
+am<-as.numeric(rownames(trainSet)) # because rownames() returns character
+testSet<-data[-am,]
+```
+
+####2 Tiesinio modelio sudarymas. Modelio sudarymui naudokite `trainSet` masyvą.
+a)  Tiesinis modelis:
+```{r}
+mod11<-lm(islaidosVaisiams~butinosIslaidos+pajamos+rajonoId+atstumas, trainSet)
+```
+
+b) Kintamųjų reikšmingumo nustatymas:
+```{r}
+kable(summary(mod11)$coef,digits=2)
+```
+Žiūrime į p-value. Kintamąjam "atstumas" ji yra >0.05, tad darome išvadą, kad kintamasis nereikšmingas ir jį pašaliname.
+```{r}
+mod1<-update(mod11, islaidosVaisiams~butinosIslaidos+pajamos+rajonoId)
+kable(summary(mod1)$coef,digits=2)
+```
+Dabar visi kintamieji reikŠmingi.  
+
+c) Vertinamas modelio gerumas:  
+* Multikolinearumo tikrinimas naudojant Variance Inflation Factor: 
+```{r}
+vif(mod1)
+```
+Multikolinearumo problemos nėra. Taip teigiama, nes egzistuojančią vidinę koreliaciją parodo koeficientai, kurių reikšmė yra daugiau nei 10 (VIF sąlyga).    
+
+*Homoskedastiškumo tikrinimas  
+Išbrėžiamos sukurto modelio paklaidos:
+```{r}
+par(mfrow=c(1,1))
+plot(mod1$res~mod1$fitted, main="Paklaidų išsibarstymas pagal reikšmes", col=2, ylab="mod1 paklaidos")
+abline(0,0)
+```
+Kaip matome, paklaidos pasiskirsčiusios pagal vidurkį 0, daugiausia intervale (-0.3, 0.2). Todėl spėjama, kad modelis - homoskedastiškas.  Tai dar tikrinama pagal Breuch-Pagan testą (`ncvTest`)
+```{r}
+ncvTest(mod1)
+```
+
+Nors pagal grafiką atrodo gerai, BET kadangi p<0.05, vadinasi, atmetame testo H0 hipotezę, kuri teigia, kad modelis homoskedastiškas - visų stebėjimų paklaidų dispersija yra  konstanta. (Nežinau kodėl taip nesutampa).
+ 
+
+"* Jei homoskedastiškumas nėra tenkinamas, tai formaliai didelės blogybės nėra - įverčiai ir toliau liktų nepaslinkti ir suderinti. Visgi reiktų būti atidiem ir papildomai pasvarstyti tris svarbius niuansus:
+a. Nehomogeniškumas gali indikuoti modelio neadekvatumą. Pvz. gal liko nepastebėta netiesinė sąveiką? O gal liko didelių išskirčių?
+b. Statistinio reikšmingumo tikrinimui naudojama kovariacijų matrica gali būti neteisinga.
+c. Nors įverčiai nepaslinkti, bet dabar negalime teigti, kad jie yra efektyvūs - tokiu atveju gali būti ir geresnių vertinimo būdų." [Blogo įrašas](http://ekonometrija.lt/blog/tiesin%C4%97-regresija)
+ 
+
+* Tikrinamas paklaidų normalumas:
+```{r}
+histmod1<-hist(mod1$res, probability=TRUE, main="mod1 liekanų histograma", ylab="Tankumas", xlab="Liekanos")
+lines(density(mod1$res), col=4, lwd=2) #liekanų tankio grafikas
+```
+
+Mėlyna linija šioje histogramoje parodo liekanų tankio pasiskirstymą. (Ji primena varpo formą, tad spėjama, kad liekanos pasiskirsčiusios normaliai.) Prielaida dar tikrinama Shapiro testu:
+```{r}
+shapiro.test(mod1$res) 
+```
+Pagal `shapiro.test` p-value<0.05 atmetame H0: liekanų paklaidos yra nėra normalios. (Vėl kažkas čia negerai?)
+
+* Liekanų normalumą  svarbu patikrinti tam, kad nustatytume, ar iš duomenų ištraukta visa naudinga informacija ir panaudota modelyje. Pavyzdžiui, ar atrasta duomenų tendencija įvertinta modelyje. Jeigu atsakymas teigiamas, paklaidos yra baltasis triukšmas (išsidėsčiusios nepriklausomai ir jų vidurkis yra 0):
+```{r}
+plot(residuals(mod1), type="l", main="Modelio mod2  paklaidos", ylab="mod2 paklaidos", xlab="Stebėjimas", col=100)
+abline(0,0)
+```
+Jeigu sąlyga netenkinama - modelis dar nėra pakankamai "geras", tad verta pasvarstyti jo tobulinimą. Tačiau iš grafiko panaš, kad liekanos - baltasis triukšmas.
+
+Išvada - pagal grafikos, atrodo, kad tenkinami modelio kokybės reikalavimai, bet testai sako ką kita. 
+
+####3. Modelio tobulinimas
+a) Pateikiamos 2 sklaidos diagramos:
+```{r}
+boxplot(residuals(mod1)~trainSet$butinosIslaidos) #duomenys visiškai išsibarstę
+boxplot(residuals(mod1)~trainSet$pajamos)#duomenys taip pat viškai išsibarstę
+```
+
+b) Siūlomi pakeitimai:  
+Aš pirmiausia atkreipčiau dėmesį į rajonoId, kuris galimai yra žyminis kintamasis:
+```{r}
+boxplot(residuals(mod1)~trainSet$rajonoId)
+```
+3 box'as atitolęs nuo kitų dviejų, tad sukuriu naują modelį, kur rajonoId - žyminis kintamasis.
+```{r}
+rajon<-as.factor(trainSet$rajonoId)
+fit2<-lm(islaidosVaisiams~butinosIslaidos+pajamos+rajon, trainSet)
+kable(summary(fit2)$coef,digits=2)
+```
+Visi kintamieji - reikšmingi pagal p-value.
+
+####4. Modelių palyginimas ir prognozė.
+a) Suskaičiuokite modelių `fit1` ir `fit2` MSE pagal pateiktą formulę ir patalpiname lentelėje.
+
+```{r}
+fit1<-mod1 #pervadinu, nes visur kitur naudojau mod1
+mse1<-(1/length(trainSet$islaidosVaisiams)*(sum(residuals(fit1))^2))
+mod1test<-lm(islaidosVaisiams ~ butinosIslaidos + pajamos, data = testSet)
+mse11<-(1/length(testSet$islaidosVaisiams)*(sum(residuals(mod1test))^2))
+mse2<-(1/length(trainSet$islaidosVaisiams)*(sum(residuals(fit2))^2))
+rajon1<-as.factor(testSet$rajonoId)
+mod2test<-lm(islaidosVaisiams ~ butinosIslaidos + pajamos + rajon1, data=testSet)
+mse21<-(1/length(testSet$islaidosVaisiams)*(sum(residuals(mod2test))^2))
+
+pav<-c("Training set", "Test set")
+mse_fit1<-c(mse1,mse11)
+mse_fit2<-c(mse2,mse21)
+tab2<-data.frame(pav,mse_fit1,mse_fit2)
+colnames(tab2)<-c(" ","fit1","fit2")
+tab2
+```
+Pačio modelio MSE skiriasi, bet nežymiai. Apskritai visų apskaičiuoti MSE nelabai skiriasi. Truputėli fit2 MSE rodiklis yra mažesnis. Prieš pasirenkant galutinį modelį, patikriname ir jų AIC bei $R^2$ koeficientai:
+
+```{r}
+aic<-c(AIC(fit1), AIC(fit2))
+r.sq<-c(summary(fit1)$r.squared, (summary(fit2))$r.squared)
+pav<-c("fit1", "fit2")
+tab3<-data.frame(pav,aic,r.sq)
+tab3
+```
+fit2 AIC koef. mažesnis, R^2 - didesnis. Tad ir pritariant MSE  rodikliui pasirenkame galutinį  modelį:
+```{r}
+fitMain<-fit2
+fitMain
+```
+Lygis : 
+$islaidosVaisiam=0.0236+ 0.026*butinosIslaidos + 0.0064*pajamos -0.04*rajon2 +0.1*rajon3$
+
+*Vėl tikrinau `fitMain` pagal testus, kurių neatitiko mod1 - išvados tokios pačios. 
+
+b)
+
+c) 
+
+
+###Užduotis nr3
+
+Naudojami `M1Germany` duomenys
+```{r}
+head(M1Germany)
+plot(M1Germany, xlab="Metai")
+```
+Matomas duomenų didėjantis trendas. 
+
+####1)  
+a) Įvertinti tiesinę regresiją pateikto modelio.
+
+Užduotį susiprastinu iki mod_3a, nes nepavyko išsitraukti seasonal komponentės ir padaryt (t-2) skirtumo $\Delta$
+```{r}
+#data_3<-as.ts(M1Germany)
+#stl(data_3)
+#stl_data<-stl(data_3, s.window = "periodic")
+#data_s<-stl_data$time.series[,"seasonal"] 
+
+mod_3a<-dynlm(logprice~L(loggnp,1)+L(loggnp,2),data=M1Germany )
+summary(mod_3a)
+```
+
+b) Gautos lygties liekanos:
+```{r}
+ser<-as.ts(residuals(mod_3a))
+```
+
+c) Eilutės stacionarumas.  
+Išbrėžiamas grafikas:
+```{r}
+plot(ser)
+```
+Nepanašu, kad eilutė būtų stacionari, nes duomenys turi ciklus, negalima nustatyti vidurkio.   
+Tiktinama pagal Kwiatkowski-Phillips-Schmidt-Shin (KPSS) testą, kur H0: duomenys yra stacionarūs ir nesezoniniai, bei duomenų grafiką:
+```{r}
+kpss.test(ser)
+```
+Kadangi testo p-value<0.05, H0 - atmetame, duomenys - nėra stacionarūs ir nesezoniniai.  
+
+Kadanti H0 atmetame, ieškoma tinkamos skirtumų operacijos:
+```{r}
+plot(stl(ser, s.window="periodic"))
+```
+Lygindami ir atsižvelgdami į pirmą ir antrą grafikus, darome išvadą, kad duomenys galėtų būti sezoniški. Tačiau bandyta taikyti"nsdiff" ir rezultate buvo 0, tad taikysime ndiff:
+```{r}
+dif <- ndiffs(ser) #įrašomas reikalingas skirtumų skaičius
+stadata<-diff(ser,lag=frequency(4), differences=dif) #išsaugoma stationarūs duomenys
+plot(stadata)
+abline(0,0)
+kpss.test(stadata)
+```
+Kadangi testo p-value>0.05, H0 - priimame, duomenys "stadata" - stacionarūs ir nesezoniniai.  
+Taip pat iš grafiko matome, kad duomeny atrodo stacionarūs ir yra išsidėstę apie 0 vidurkį. 
+
+e) Box-Cox transformacija:  
+Duomenims ši transformacija nėra būtina, nes panašu, kad svyravimai yra tolydūs.Tikriname (reikia surasti ir lambda, tam kad įvykdytume tinkamą transformaciją). Po to, išbrėžiame ją su originaliais duomenimis.
+```{r}
+lambdae<-BoxCox.lambda(ser)
+par(mfcol=c(2,1))
+plot(ser , main="Originalūs  duomenys") 
+plot(BoxCox( ser, lambda=lambdae), main="BoxCox transformuoti  duomenys") 
+```
+Iš grafiko matome, kad pagal Box-Cox metodą, duomenys tapo tik truputėli labiau reguliariais, sezoniškumo svyravimai pasidarė nežymiai tolygesni. Tad, kadangi esminių skirtumų nelabai yra, lieku prie originalių duomenų. 
+
+####2  
+*Modelį vadinsiu `mod_1`, nes `mod1`, jau uŽimtas antroje užduotyje. 
+a) `ets` funkcija raskite siūlomą eksponentinio glodinimo modelį:
+```{r}
+mod_1<-ets(ser)
+mod_1[13]
+```
+A- addictive errors, N- no trend, A - additive season. 
+
+b) 
+```{r}
+mod_b1<-ets(ser, model="AAA")
+mod_b2<-ets(ser, model="ANN")
+#Tikriname kuris geresnis prieš pasirinkdami
+#AIC
+AIC(mod_b1)
+AIC(mod_b2)
+#accuracy
+accuracy(mod_b1)
+accuracy(mod_b2)
+```
+`mod_b1` turi mažesnius parametrus tiek AIC, tiek accuracy, tad jį ir pasirenkame kaip `mod_2`:
+```{r}
+mod_2<-mod_b1
+```
+`mod_2` skiriasi nuo `mod_1` savo trendu, A - additive trend. 
+c) autoarima:
+```{r}
+mod_3<-auto.arima(ser)
+summary(mod_3)
+```
+Paaiškinimas:
+(p,d,q)(P,D,Q)  
+Mažosios raidės- nesezoninė modelio dalis  
+p - autoregresinė modelio dalis  
+d - diferencijavimo eilė  
+q - moving average modelio dalis  
+Didžiosios raidės parodo tą  patį, ką ir mažosios, tiesiog jos yra skirtos sezoniniai modelio 
+daliai apibūdinti. Indeksas šalia antrųjų skliaustų reiškia periodų skaicių per sezoną.  
+
+Gautas mūsų modelis: ARIMA(3,1,0)(2,0,1)[4]
+
+Pasiūlyta intergavimo dalis praėjusioje dalyje su šia sutampa (d=1).
+
+d)
+```{r}
+
+```
+
+####3. Modelių tyrimas ir palyginimas  
+a) Patikrinkite visų keturių modelių liekanas - ar jos atrodo kaip baltas triukšmas?
+Modelių liekanų tikrinimas. Tikrinama pagal jų  grafiką, AFC grafiką bei Ljung-Box testu ( H0: time series nepriklausomumas )
+mod1:
+```{r}
+#par(mfcol=c(2,1))
+#plot(mod1$residuals, main="mod1 paklaidos")
+#Acf(residuals(mod1))
+#Box.test(residuals(mod1), type="Ljung-Box")
+```
+Iš pirmo grafiko matome, kad paklaidos (ne)atrodo kaip baltas triukšmas. ACF grafikas ne(parodo) reikšmingos autokoreliacijos.Kadangi H0>0.05, tai H0 priimame. Išvada - paklaidas galime laikyti baltuoju triukšmu.   
+
+mod2:
+```{r}
+#par(mfcol=c(2,1))
+#plot(mod2$residuals, main="mod2 paklaidos")
+#Acf(residuals(mod2))
+#Box.test(residuals(mod2), type="Ljung-Box")
+```
+Iš pirmo grafiko matome, kad paklaidos (ne)atrodo kaip baltas triukšmas. ACF grafikas ne(parodo) reikšmingos autokoreliacijos.Kadangi H0>0.05, tai H0 priimame. Išvada - paklaidas galime laikyti baltuoju triukšmu. 
+
+mod3:
+```{r}
+#par(mfcol=c(2,1))
+#plot(mod13$residuals, main="mod3 paklaidos")
+#Acf(residuals(mod3))
+#Box.test(residuals(mod3), type="Ljung-Box")
+```
+Iš pirmo grafiko matome, kad paklaidos (ne)atrodo kaip baltas triukšmas. ACF grafikas ne(parodo) reikšmingos autokoreliacijos.Kadangi H0>0.05, tai H0 priimame. Išvada - paklaidas galime laikyti baltuoju triukšmu. 
+
+mod4:
+```{r}
+#par(mfcol=c(2,1))
+#plot(mod4$residuals, main="mod1 paklaidos")
+#Acf(residuals(mod4))
+#Box.test(residuals(mod4), type="Ljung-Box")
+```
+Iš pirmo grafiko matome, kad paklaidos (ne)atrodo kaip baltas triukšmas. ACF grafikas ne(parodo) reikšmingos autokoreliacijos.Kadangi H0>0.05, tai H0 priimame. Išvada - paklaidas galime laikyti baltuoju triukšmu.
+
+b) `trainSet` ir `testSet`
+```{r}
+#length()*0.75 #Kiek duomenų trainSetui
+#trainSet<-window(, end=c())
+#testSet<-window(, start=c())
+```
+
+c) Moodeliai su trainSet
+````{r}
+#mod1_b<-ets(trainSet)
+#mod2_b<-
+#mod3_b<-auto.arima(trainSet)
+#mod4_b<-
+```
+
+d) Prognozės:
+```{r}
+#f_mod1_b<-forecast(mod1_b, h=)
+#plot(f_mod1_b)
+#lines(testSet, col="red", lwd=2)
+
+#f_mod2_b<-forecast(mod2_b, h=)
+#plot(f_mod1_b)
+#lines(testSet, col="red", lwd=2)
+
+#f_mod3_b<-forecast(mod3_b, h=)
+#plot(f_mod3_b)
+#lines(testSet, col="red", lwd=2)
+
+#f_mod4_b<-forecast(mod4_b, h=)
+#plot(f_mod4_b)
+#lines(testSet, col="red", lwd=2)
+```
+Geriausiai prognozė atrodo su 
+
+e) accuracy tikrinimas
+```{r}
+#tab1 = rbind(
+#  accuracy(f_mod1_b, ser)[,2],
+#  accuracy(f_mod2_b, ser)[,2],
+#  accuracy(f_mod3_b, ser)[,2],
+#  accuracy(f_mod4_b, ser)[,2]
+#)
+#rownames(tab1) <- c("f_mod1_b", "f_mod2_b", "f_mod3_b", "f_mod4_b")
+#kable(tab1, digits=3)
+```
+
+Galutinis modelis:
+
+```{r}
+#modMain<-
+```
