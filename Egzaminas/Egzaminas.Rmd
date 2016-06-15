@@ -444,7 +444,7 @@ Iš pirmo grafiko matome, kad paklaidos atrodo kaip baltas triukšmas. ACF grafi
 
 Toliau nebespėta
 
--------
+-----------
 mod2:
 ```{r}
 #par(mfcol=c(2,1))
