@@ -414,21 +414,37 @@ Pasiūlyta intergavimo dalis praėjusioje dalyje su šia sutampa (d=1).
 
 d)
 ```{r}
-
+mod_d1<-arima(ser, order=c(2,1,1),seasonal=list(order=c(2,0,1), period=4))
+mod_d2<-arima(ser, order=c(3,1,0),seasonal=list(order=c(1,0,2), period=4))
+#Tikriname kuris geresnis prieš pasirinkdami
+#AIC
+AIC(mod_d1)
+AIC(mod_d2)
+#accuracy
+accuracy(mod_d1)
+accuracy(mod_d2)
 ```
+Modeliai beveik identiški, tad renkuosi `mod_d1`
+```{r}
+mod_4<-mod_d1
+```
+
 
 ####3. Modelių tyrimas ir palyginimas  
 a) Patikrinkite visų keturių modelių liekanas - ar jos atrodo kaip baltas triukšmas?
 Modelių liekanų tikrinimas. Tikrinama pagal jų  grafiką, AFC grafiką bei Ljung-Box testu ( H0: time series nepriklausomumas )
 mod1:
 ```{r}
-#par(mfcol=c(2,1))
-#plot(mod1$residuals, main="mod1 paklaidos")
-#Acf(residuals(mod1))
-#Box.test(residuals(mod1), type="Ljung-Box")
+par(mfcol=c(2,1))
+plot(mod_1$residuals, main="mod_1 paklaidos")
+Acf(residuals(mod_1))
+Box.test(residuals(mod_1), type="Ljung-Box")
 ```
-Iš pirmo grafiko matome, kad paklaidos (ne)atrodo kaip baltas triukšmas. ACF grafikas ne(parodo) reikšmingos autokoreliacijos.Kadangi H0>0.05, tai H0 priimame. Išvada - paklaidas galime laikyti baltuoju triukšmu.   
+Iš pirmo grafiko matome, kad paklaidos atrodo kaip baltas triukšmas. ACF grafikas neparodo reikšmingos autokoreliacijos (tik 2 reiŠmingi lagai). 
 
+Toliau nebespėta
+
+-------
 mod2:
 ```{r}
 #par(mfcol=c(2,1))
